@@ -4,8 +4,23 @@ A redesign of [ponnarsankartractors.com](https://ponnarsankartractors.com/) — 
 VST Tillers and Gomadhi Engineering dealership in Paramathi Velur, Namakkal, Tamil Nadu,
 trading since 1988.
 
+Live at **https://varun642002.github.io/ponnarsankar-tractors-site/**
+
 No framework and no build dependencies. Pages are generated from the content and templates
 in `src/` into a `dist/` folder of plain HTML you can host anywhere.
+
+## Deploying
+
+`.github/workflows/deploy.yml` runs `node build.mjs` and publishes `dist/` to GitHub Pages on
+every push to `main`, so the generated HTML never enters the repository. Push, and the live
+site follows.
+
+To serve from the real domain instead, set the origin so `sitemap.xml`, `robots.txt` and the
+404 page's `<base>` point at the right host:
+
+```bash
+SITE_ORIGIN=https://ponnarsankartractors.com node build.mjs
+```
 
 ## Build and preview
 
