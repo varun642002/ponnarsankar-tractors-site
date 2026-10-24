@@ -187,12 +187,24 @@ img{display:block;max-width:100%}
 .burger{display:inline-flex}
 @media (min-width:1080px){.burger{display:none}}
 
-/* mobile drawer */
+/* mobile drawer: a panel over the page, not a block pushed into it, so page
+   text cannot show through beside it and the bottom bar cannot sit on top */
 .drawer{
-  margin-top:10px;border-radius:var(--r-lg);padding:14px;color:var(--on-field);
-  display:grid;gap:6px;
+  position:fixed;z-index:39;
+  top:calc(env(safe-area-inset-top,0px) + 86px);
+  bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  right:max(14px,env(safe-area-inset-right,0px));
+  left:auto;width:min(420px,calc(100% - max(28px,env(safe-area-inset-left,0px) + 14px)));
+  border-radius:var(--r-lg);padding:14px;color:var(--on-field);
+  display:grid;gap:6px;align-content:start;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  background:rgba(2,58,42,.98);
 }
 .drawer[hidden]{display:none}
+/* while it is open the bottom bar would overlap it, and the page behind it
+   should not scroll under the finger */
+:root.drawer-open .rail{display:none}
+:root.drawer-open body{overflow:hidden}
 @media (min-width:1080px){.drawer{display:none!important}}
 .drawer a{
   text-decoration:none;font-family:var(--display);font-size:17px;font-weight:600;
@@ -586,3 +598,30 @@ tr:last-child td{border-bottom:0}
 
 /* a plain row of pill links, with none of the checkmark bullets of .checks */
 .link-row{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+
+/* ---------- phones: thumb-sized targets and a floor under the type ---------- */
+@media (max-width:860px){
+  .btn,.chip,.pill-link,.arrow,.copy{min-height:44px}
+  .arrow{width:44px}
+  .copy,.chip{display:inline-flex;align-items:center;font-size:12px}
+  .copy{padding:0 14px}
+  .side h2,th{font-size:12px}
+  .foot a,.side a,.nav-menu a,.drawer a,.link-row .pill-link,.crumbs a{
+    min-height:44px;display:flex;align-items:center;
+  }
+  /* a dot large enough to hit, with the bar drawn inside the target */
+  .dot{height:44px;width:40px;padding:0;background:transparent;border:0;position:relative}
+  .dot::before{
+    content:"";position:absolute;left:3px;right:3px;top:50%;transform:translateY(-50%);
+    height:10px;border-radius:var(--r-pill);
+    background:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.35);
+  }
+  .dot[aria-selected="true"]{width:52px;background:transparent}
+  .dot[aria-selected="true"]::before{background:var(--fill);border-color:var(--fill)}
+  /* the smallest labels sit at the legibility floor on a phone */
+  .mark-sub{font-size:11px}
+  .num,.maker,.seal,.spec-pills dt,.field label,.foot h4,.seo-block > summary,
+  .terms span,.terms span i,.plate dd,.badge span,.stat span,.crumbs,.note,
+  .on-request,.hours,.lightbox-count{font-size:12px}
+  .form-note{font-size:12.5px}
+}

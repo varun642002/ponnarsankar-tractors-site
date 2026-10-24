@@ -32,6 +32,14 @@ node serve.mjs     # serves dist/ on http://localhost:4321
 `build.mjs` needs nothing beyond Node 18 or newer. There is no `package.json`, no install
 step and no lockfile.
 
+One caveat when previewing locally: `404.html` carries a `<base>` pointing at the deploy
+path, so a default build serves it unstyled from `localhost`. Build with the local origin to
+check that page:
+
+```bash
+SITE_ORIGIN=http://localhost:4321 node build.mjs
+```
+
 ## What gets built
 
 Twelve pages, plus `sitemap.xml` and `robots.txt`:

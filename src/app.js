@@ -29,9 +29,19 @@
   var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
   if (burger && drawer) {
-    burger.addEventListener('click', function () {
-      drawer.hidden = !drawer.hidden;
-      burger.setAttribute('aria-expanded', String(!drawer.hidden));
+    var setDrawer = function (open) {
+      drawer.hidden = !open;
+      burger.setAttribute('aria-expanded', String(open));
+      burger.textContent = open ? 'Close' : 'Menu';
+      root.classList.toggle('drawer-open', open);
+    };
+    burger.addEventListener('click', function () { setDrawer(drawer.hidden); });
+    // A link to the page you are already on does not navigate, so close it here.
+    drawer.addEventListener('click', function (e) {
+      if (e.target.closest('a')) setDrawer(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !drawer.hidden) { setDrawer(false); burger.focus(); }
     });
   }
 
