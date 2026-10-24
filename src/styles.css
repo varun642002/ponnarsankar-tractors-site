@@ -128,7 +128,14 @@ img{display:block;max-width:100%}
 .site-head{position:sticky;top:env(safe-area-inset-top,0px);z-index:35;padding-top:10px}
 .head-row{
   display:flex;align-items:center;gap:14px;min-height:62px;
-  padding:9px 10px 9px 16px;border-radius:var(--r-pill);color:var(--on-field);
+  padding:11px 14px;border-radius:var(--r-pill);color:var(--on-field);
+}
+/* one control height across the bar, so the pills share top and bottom edges */
+.head-row .nav > a,
+.head-row .nav-top,
+.head-row .chip,
+.head-row .head-call{
+  height:40px;padding-block:0;display:inline-flex;align-items:center;
 }
 .mark{display:flex;align-items:center;gap:11px;text-decoration:none;margin-right:auto;min-width:0}
 .mark > span{min-width:0}
@@ -230,10 +237,9 @@ img{display:block;max-width:100%}
 .arrow:hover{border-color:var(--amber-bright);color:var(--amber-bright)}
 
 .plate-wrap{position:relative;z-index:2;padding-bottom:clamp(26px,4vw,40px)}
-.plate{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;border-radius:var(--r-lg);padding:8px}
-@media (min-width:860px){.plate{grid-template-columns:repeat(4,1fr);border-radius:var(--r-pill);padding:10px}}
-.plate div{padding:14px 16px;border-radius:var(--r-md);text-align:center;background:rgba(255,255,255,.05)}
-@media (min-width:860px){.plate div{border-radius:var(--r-pill)}}
+/* same track sizing and gap as .badges, so the two rows line up column for column */
+.plate{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.plate > div{padding:16px 20px;border-radius:var(--r-pill);text-align:center;min-width:0}
 .plate dt{font-family:var(--display);font-size:19px;font-weight:800;color:var(--amber-bright);line-height:1.1}
 .plate dd{margin:5px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-field-soft);line-height:1.5}
 
@@ -564,14 +570,13 @@ tr:last-child td{border-bottom:0}
 
 /* very narrow phones: let the wordmark give way to the controls */
 @media (max-width:560px){
-  .head-row{gap:10px;padding-left:12px}
+  .head-row{gap:10px;padding:11px 12px}
   .mark{overflow:hidden}
   .mark-name{font-size:17px;overflow:hidden;text-overflow:ellipsis}
   .mark-sub{display:none}
   .chip{padding:9px 11px;font-size:11px}
 }
 @media (max-width:400px){
-  .mark-badge{width:34px;height:34px;font-size:15px}
   .rail a{font-size:9px;letter-spacing:.06em}
   .rail a b{font-size:13px}
 }

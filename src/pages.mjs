@@ -119,11 +119,11 @@ export function home(mode) {
     <button class="arrow" id="slide-next" type="button" aria-label="Next slide">&rarr;</button>
   </div>
   <div class="wrap plate-wrap">
-    <div class="plate glass-dark">
-      <div><dt>1988</dt><dd>Serving farmers since</dd></div>
-      <div><dt>6 branches</dt><dd>Across Tamil Nadu</dd></div>
-      <div><dt>7 ranges</dt><dd>Of farm machinery</dd></div>
-      <div><dt>2 dealerships</dt><dd>VST and Gomadhi</dd></div>
+    <div class="plate">
+      <div class="glass-dark"><dt>1988</dt><dd>Serving farmers since</dd></div>
+      <div class="glass-dark"><dt>6 branches</dt><dd>Across Tamil Nadu</dd></div>
+      <div class="glass-dark"><dt>7 ranges</dt><dd>Of farm machinery</dd></div>
+      <div class="glass-dark"><dt>2 dealerships</dt><dd>VST and Gomadhi</dd></div>
     </div>
   </div>
 </section>
