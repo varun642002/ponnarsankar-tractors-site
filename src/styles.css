@@ -136,8 +136,7 @@ img{display:block;max-width:100%}
 /* one control height across the bar, so the pills share top and bottom edges */
 .head-row .nav > a,
 .head-row .nav-top,
-.head-row .chip,
-.head-row .head-call{
+.head-row .chip{
   height:40px;padding-block:0;display:inline-flex;align-items:center;
 }
 .mark{display:flex;align-items:center;gap:11px;text-decoration:none;margin-right:auto;min-width:0}
@@ -183,7 +182,11 @@ img{display:block;max-width:100%}
 }
 .chip:hover{border-color:var(--amber-bright);color:var(--amber-bright);background:rgba(255,255,255,.14)}
 .head-call{display:none}
-@media (min-width:620px){.head-call{display:inline-flex;padding:11px 22px;font-size:15px}}
+/* the bottom bar already carries Enquire on phones, so it appears only once
+   there is room for it beside the wordmark */
+@media (min-width:620px){
+  .head-call{display:inline-flex;align-items:center;height:40px;padding:0 22px;font-size:15px}
+}
 .burger{display:inline-flex}
 @media (min-width:1080px){.burger{display:none}}
 
@@ -603,6 +606,9 @@ tr:last-child td{border-bottom:0}
 @media (max-width:860px){
   .btn,.chip,.pill-link,.arrow,.copy{min-height:44px}
   .arrow{width:44px}
+  /* keep the whole header bar on one height here too */
+  .head-row .chip,.head-row .head-call{height:44px}
+  .mark-badge{width:44px;height:44px}
   .copy,.chip{display:inline-flex;align-items:center;font-size:12px}
   .copy{padding:0 14px}
   .side h2,th{font-size:12px}
