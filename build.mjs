@@ -11,7 +11,10 @@ import { home, productsIndex, about, branchesPage, contact, productPage } from '
 
 const here = dirname(fileURLToPath(import.meta.url));
 const dist = join(here, 'dist');
-const ORIGIN = 'https://ponnarsankartractors.com';
+// Where the built site will be served from, used by sitemap.xml and robots.txt.
+// Override when deploying elsewhere:
+//   SITE_ORIGIN=https://ponnarsankartractors.com node build.mjs
+const ORIGIN = (process.env.SITE_ORIGIN || 'https://varun642002.github.io/ponnarsankar-tractors-site').replace(/\/$/, '');
 
 const pages = [
   ['index.html', home('document'), '1.0'],
