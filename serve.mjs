@@ -29,6 +29,13 @@ createServer(async (req, res) => {
     res.writeHead(200, { 'content-type': types[extname(file)] || 'application/octet-stream' });
     res.end(body);
   } catch {
-    res.writeHead(404).end('not found');
+    // Match the host: unknown paths get 404.html with a 404 status.
+    try {
+      const page = await readFile(join(root, '404.html'));
+      res.writeHead(404, { 'content-type': types['.html'] });
+      res.end(page);
+    } catch {
+      res.writeHead(404).end('not found');
+    }
   }
 }).listen(port, () => console.log(`site on http://localhost:${port}`));

@@ -7,7 +7,7 @@ import { writeFile, mkdir, cp, rm } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { products } from './src/data.mjs';
-import { home, productsIndex, about, branchesPage, contact, productPage } from './src/pages.mjs';
+import { home, productsIndex, about, branchesPage, contact, productPage, notFound } from './src/pages.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const dist = join(here, 'dist');
@@ -47,6 +47,9 @@ await mkdir(join(dist, 'products'), { recursive: true });
 for (const [path, html] of pages) {
   await writeFile(join(dist, path), html);
 }
+// Served for any unknown path, so it is not in the sitemap and its links are
+// resolved against the deploy's base path rather than the path that was typed.
+await writeFile(join(dist, '404.html'), notFound(new URL(ORIGIN + '/').pathname));
 await writeFile(join(dist, 'index.artifact.html'), home('fragment'));
 await writeFile(join(dist, 'sitemap.xml'), sitemap);
 await writeFile(join(dist, 'robots.txt'), robots);

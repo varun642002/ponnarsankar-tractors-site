@@ -254,7 +254,7 @@ export function pageHead(depth, { title, lede, image, crumbs }) {
  * Wraps a page body. `mode` is "document" for a deployable file or "fragment"
  * for the Claude artifact, whose host supplies the document skeleton.
  */
-export function shell({ depth = 0, current = '', title, description, body, jsonLd, mode = 'document' }) {
+export function shell({ depth = 0, current = '', title, description, body, jsonLd, mode = 'document', base }) {
   const p = up(depth);
   const head = `<title>${esc(title)}</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -280,6 +280,7 @@ ${mobileRail(depth)}
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+${base ? `<base href="${base}">` : ''}
 ${head}
 <meta name="description" content="${esc(description)}">
 <meta property="og:title" content="${esc(title)}">
