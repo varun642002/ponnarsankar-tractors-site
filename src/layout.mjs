@@ -33,7 +33,11 @@ export function img(src, { alt = '', cls = '', sizes = '100vw', prefix = '', eag
 
 /** Reused by the card grid and the product pages. */
 export const SIZES = {
-  full: '100vw',
+  // The full-bleed photographs sit under a near-opaque gradient with text over
+  // them, so a phone is deliberately told it needs fewer pixels than its 2x
+  // screen could show: softness no one can see, for a third of the bytes.
+  // Product photographs, where detail matters, are never under-served this way.
+  full: '(max-width:700px) 70vw, 100vw',
   // measured, not guessed: the card image is the viewport less the page gutter
   // and the card's own padding, so the browser is not told to fetch more than
   // it will draw
