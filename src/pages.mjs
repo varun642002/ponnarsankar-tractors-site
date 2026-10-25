@@ -2,7 +2,7 @@ import {
   business, badges, carousel, stats, support, whyUs, partners,
   testimonials, gallery, products,
 } from './data.mjs';
-import { esc, branchGrid, enquiryPanel, pageHead, shell } from './layout.mjs';
+import { esc, branchGrid, enquiryPanel, pageHead, shell, img, SIZES } from './layout.mjs';
 
 const localBusiness = {
   '@context': 'https://schema.org',
@@ -35,7 +35,7 @@ const productCards = (depth = 0) =>
   `<div class="grid">${products
     .map(
       (p) => `<a class="card glass" href="${depth ? '' : ''}products/${p.slug}.html">
-  <img class="card-img" src="${p.image}" alt="${esc(p.name)}" loading="lazy">
+  ${img(p.image, { cls: 'card-img', alt: esc(p.name), sizes: SIZES.card })}
   <div class="card-body">
     <h3>${esc(p.name)}<span class="ta">${p.ta}</span></h3>
     <p class="tagline">${esc(p.summary)}</p>
@@ -64,7 +64,7 @@ const partnerCards = `<div class="partners">${partners
     (p) => `<article class="partner glass">
   <div class="partner-top">
     <h3>${esc(p.name)}</h3>
-    ${p.logo ? `<img class="partner-logo" src="${p.logo}" alt="${esc(p.name)}" loading="lazy">` : ''}
+    ${p.logo ? img(p.logo, { cls: 'partner-logo', alt: esc(p.name), sizes: SIZES.logo }) : ''}
   </div>
   <span class="seal">${esc(p.seal)}</span>
   <p class="tagline">${esc(p.body)}</p>
@@ -90,7 +90,7 @@ export function home(mode) {
   const slides = carousel
     .map(
       (s, i) => `<article class="slide${i === 0 ? ' is-active' : ''}" aria-hidden="${i !== 0}">
-  <img class="slide-img" src="${s.image}" alt="" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}>
+  ${img(s.image, { cls: 'slide-img', sizes: SIZES.full, eager: i === 0 })}
   <div class="wrap slide-inner">
     <p class="eyebrow">${esc(s.eyebrow)}</p>
     ${i === 0 ? '<h1>' : '<h2>'}${s.title}${i === 0 ? '</h1>' : '</h2>'}
@@ -212,7 +212,7 @@ export function notFound(base) {
     .join('\n');
 
   const body = `<section class="page-head on-dark">
-  <img class="page-head-img" src="assets/hero-cultivator.webp" alt="">
+  ${img('assets/hero-cultivator.webp', { cls: 'page-head-img', sizes: SIZES.full })}
   <div class="wrap">
     <p class="eyebrow">404</p>
     <h1>This page is not here</h1>
@@ -396,7 +396,7 @@ export function about() {
     <div class="cert-grid">${partners
       .map(
         (p) => `<article class="cert glass">
-  <img src="${p.certificate}" alt="${esc(p.name)} dealership certificate" loading="lazy">
+  ${img(p.certificate, { alt: `${esc(p.name)} dealership certificate`, sizes: SIZES.certificate })}
   <h3>${esc(p.name)}</h3>
   <p>${esc(p.body)}</p>
 </article>`,
@@ -416,7 +416,7 @@ export function about() {
     </div>
     <div class="gallery">${gallery
       .map(
-        (g) => `<button type="button"><img src="${g.src}" alt="${esc(g.alt)}" loading="lazy"></button>`,
+        (g) => `<button type="button">${img(g.src, { alt: esc(g.alt), sizes: SIZES.gallery })}</button>`,
       )
       .join('\n')}</div>
   </div>
@@ -559,7 +559,7 @@ export function productPage(product) {
 
       return `<article class="model glass">
   ${m.image ? `<figure class="model-media">
-    <img src="../${m.image}" alt="${esc(m.name)}" loading="lazy">
+    ${img(m.image, { alt: esc(m.name), sizes: SIZES.model, prefix: '../' })}
   </figure>` : ''}
   <div class="model-info">
     <div class="model-top">

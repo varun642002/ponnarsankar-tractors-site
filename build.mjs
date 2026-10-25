@@ -3,8 +3,8 @@
 // Every page is written twice over: dist/*.html are standalone documents for
 // real hosting, and dist/index.artifact.html is the same home page without the
 // document skeleton, because the Claude artifact host supplies its own.
-import { writeFile, mkdir, cp, rm } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { writeFile, mkdir, cp, rm, readdir } from 'node:fs/promises';
+import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { products } from './src/data.mjs';
 import { home, productsIndex, about, branchesPage, contact, productPage, notFound } from './src/pages.mjs';
@@ -55,6 +55,19 @@ await writeFile(join(dist, 'sitemap.xml'), sitemap);
 await writeFile(join(dist, 'robots.txt'), robots);
 await cp(join(here, 'src', 'styles.css'), join(dist, 'styles.css'));
 await cp(join(here, 'src', 'app.js'), join(dist, 'app.js'));
-await cp(join(here, 'assets'), join(dist, 'assets'), { recursive: true });
+// Ship the resized variants, not the multi-megabyte sources they came from.
+// A source with no variant is already small enough to serve as it is.
+const assetsDir = join(here, 'assets');
+const assetNames = new Set(await readdir(assetsDir));
+const VARIANTS = [480, 720, 960, 1440];
+const supersededBySmallerCopies = (name) => {
+  const m = /^(.+)\.(?:webp|jpe?g|png)$/i.exec(name);
+  return m ? VARIANTS.some((w) => assetNames.has(`${m[1]}-${w}.webp`)) : false;
+};
+
+await cp(assetsDir, join(dist, 'assets'), {
+  recursive: true,
+  filter: (src) => src === assetsDir || !supersededBySmallerCopies(basename(src)),
+});
 
 console.log(`built site/dist — ${pages.length} pages`);

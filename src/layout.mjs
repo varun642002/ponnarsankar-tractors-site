@@ -1,4 +1,48 @@
+import { readdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { business, nav, products, branches, productOfferings, searchTerms } from './data.mjs';
+
+const assetFiles = new Set(
+  readdirSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'assets')),
+);
+const VARIANT_WIDTHS = [480, 720, 960, 1440];
+
+/**
+ * An <img> offering the narrow variants optimize.py wrote, so a phone fetches a
+ * 480px file rather than the 4600px source. Falls back to the original for the
+ * few images already small enough to have no variants.
+ */
+export function img(src, { alt = '', cls = '', sizes = '100vw', prefix = '', eager = false } = {}) {
+  const m = /^assets\/(.+)\.(?:webp|jpe?g|png)$/i.exec(src);
+  const widths = m ? VARIANT_WIDTHS.filter((w) => assetFiles.has(`${m[1]}-${w}.webp`)) : [];
+  const url = (w) => `${prefix}assets/${m[1]}-${w}.webp`;
+  const fallback = widths.includes(960) ? url(960) : widths.length ? url(widths[widths.length - 1]) : prefix + src;
+
+  return [
+    '<img',
+    cls ? `class="${cls}"` : '',
+    `src="${fallback}"`,
+    widths.length ? `srcset="${widths.map((w) => `${url(w)} ${w}w`).join(', ')}"` : '',
+    widths.length ? `sizes="${sizes}"` : '',
+    `alt="${alt}"`,
+    eager ? 'fetchpriority="high"' : 'loading="lazy"',
+    'decoding="async">',
+  ].filter(Boolean).join(' ');
+}
+
+/** Reused by the card grid and the product pages. */
+export const SIZES = {
+  full: '100vw',
+  // measured, not guessed: the card image is the viewport less the page gutter
+  // and the card's own padding, so the browser is not told to fetch more than
+  // it will draw
+  card: '(min-width:1200px) 350px, (min-width:700px) calc(50vw - 48px), calc(100vw - 56px)',
+  model: '(min-width:840px) 292px, calc(100vw - 92px)',
+  gallery: '(min-width:700px) 33vw, calc(100vw - 52px)',
+  certificate: '(min-width:720px) 46vw, calc(100vw - 76px)',
+  logo: '160px',
+};
 
 export const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -241,7 +285,7 @@ export function pageHead(depth, { title, lede, image, crumbs }) {
     )
     .join('<span>/</span>');
   return `<section class="page-head on-dark">
-  ${image ? `<img class="page-head-img" src="${p}${image}" alt="">` : ''}
+  ${image ? img(image, { cls: 'page-head-img', prefix: p, sizes: SIZES.full }) : ''}
   <div class="wrap">
     <nav class="crumbs" aria-label="Breadcrumb">${trail}</nav>
     <h1>${title}</h1>
