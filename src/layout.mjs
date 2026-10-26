@@ -43,7 +43,9 @@ export const SIZES = {
   // it will draw
   card: '(min-width:1200px) 350px, (min-width:700px) calc(50vw - 48px), calc(100vw - 56px)',
   model: '(min-width:840px) 292px, calc(100vw - 92px)',
-  gallery: '(min-width:700px) 33vw, calc(100vw - 52px)',
+  // Thumbnails are deliberately under-served: tapping one opens the lightbox,
+  // which loads the largest variant, so the grid does not need full density.
+  gallery: '(min-width:700px) 33vw, 60vw',
   certificate: '(min-width:720px) 46vw, calc(100vw - 76px)',
   logo: '160px',
 };
@@ -289,7 +291,7 @@ export function pageHead(depth, { title, lede, image, crumbs }) {
     )
     .join('<span>/</span>');
   return `<section class="page-head on-dark">
-  ${image ? img(image, { cls: 'page-head-img', prefix: p, sizes: SIZES.full }) : ''}
+  ${image ? img(image, { cls: 'page-head-img', prefix: p, sizes: SIZES.full, eager: true }) : ''}
   <div class="wrap">
     <nav class="crumbs" aria-label="Breadcrumb">${trail}</nav>
     <h1>${title}</h1>

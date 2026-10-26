@@ -120,9 +120,17 @@
     var big = document.getElementById('lightbox-img');
     var count = document.getElementById('lightbox-count');
     var at = 0;
+    // The grid serves small thumbnails; full screen deserves the largest file
+    // the srcset offers.
+    var largest = function (img) {
+      var set = img.getAttribute('srcset');
+      if (!set) return img.getAttribute('src');
+      var last = set.split(',').pop().trim().split(/\s+/)[0];
+      return last || img.getAttribute('src');
+    };
     var render = function () {
       var img = shots[at].querySelector('img');
-      big.src = img.getAttribute('src');
+      big.src = largest(img);
       big.alt = img.getAttribute('alt');
       count.textContent = (at + 1) + ' / ' + shots.length;
     };

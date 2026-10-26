@@ -626,6 +626,7 @@ tr:last-child td{border-bottom:0}
   .dot[aria-selected="true"]::before{background:var(--fill);border-color:var(--fill)}
   /* the smallest labels sit at the legibility floor on a phone */
   .mark-sub{font-size:11px}
+  .soon span,.foot-bottom{font-size:12px}
   .num,.maker,.seal,.spec-pills dt,.field label,.foot h4,.seo-block > summary,
   .terms span,.terms span i,.plate dd,.badge span,.stat span,.crumbs,.note,
   .on-request,.hours,.lightbox-count{font-size:12px}
