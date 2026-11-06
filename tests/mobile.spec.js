@@ -173,6 +173,46 @@ test('Tamil can be switched on and stays on across pages', async ({ page }) => {
   await expect(page.locator('.ta-swap').first()).toHaveText(/[஀-௿]/);
 });
 
+test('fonts are self-hosted and each weight is its own shape', async ({ page }) => {
+  const external = [];
+  page.on('request', (r) => {
+    if (!r.url().startsWith('http://127.0.0.1')) external.push(r.url());
+  });
+
+  await page.goto('/index.html');
+  await page.evaluate(() => document.fonts.ready);
+  expect(external, 'no third-party requests').toEqual([]);
+
+  // a heavier weight must put more ink on the canvas; declaring one file for
+  // several weights silently renders them all identically
+  const ink = await page.evaluate(() => {
+    const measure = (family, weight) => {
+      const c = document.createElement('canvas');
+      c.width = 420; c.height = 90;
+      const x = c.getContext('2d');
+      x.font = `${weight} 64px "${family}"`;
+      x.fillText('Harvest', 4, 66);
+      const d = x.getImageData(0, 0, 420, 90).data;
+      let n = 0;
+      for (let i = 3; i < d.length; i += 4) if (d[i] > 40) n++;
+      return n;
+    };
+    return {
+      saira: [600, 700, 800].map((w) => measure('Saira Condensed', w)),
+      plex: [400, 600].map((w) => measure('IBM Plex Sans', w)),
+    };
+  });
+  expect(ink.saira[1], 'Saira 700 heavier than 600').toBeGreaterThan(ink.saira[0]);
+  expect(ink.saira[2], 'Saira 800 heavier than 700').toBeGreaterThan(ink.saira[1]);
+  expect(ink.plex[1], 'Plex 600 heavier than 400').toBeGreaterThan(ink.plex[0]);
+
+  // Tamil must come from the Tamil font, not a fallback
+  const tamil = page.locator('.ta').first();
+  await expect(tamil).toHaveText(/[஀-௿]/);
+  const family = await tamil.evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(family).toContain('Noto Sans Tamil');
+});
+
 test('phones are served small images, not the full-size sources', async ({ page }) => {
   await page.goto('/index.html');
   // networkidle never settles here: the carousel keeps loading slides

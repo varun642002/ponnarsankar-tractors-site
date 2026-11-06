@@ -3,7 +3,7 @@
 // Every page is written twice over: dist/*.html are standalone documents for
 // real hosting, and dist/index.artifact.html is the same home page without the
 // document skeleton, because the Claude artifact host supplies its own.
-import { writeFile, mkdir, cp, rm, readdir } from 'node:fs/promises';
+import { writeFile, mkdir, cp, rm, readdir, readFile } from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { products } from './src/data.mjs';
@@ -53,7 +53,11 @@ await writeFile(join(dist, '404.html'), notFound(new URL(ORIGIN + '/').pathname)
 await writeFile(join(dist, 'index.artifact.html'), home('fragment'));
 await writeFile(join(dist, 'sitemap.xml'), sitemap);
 await writeFile(join(dist, 'robots.txt'), robots);
-await cp(join(here, 'src', 'styles.css'), join(dist, 'styles.css'));
+// fonts.py writes the @font-face rules from the files it actually produced, so
+// the stylesheet cannot name a weight or filename that is not there
+const fontFaces = await readFile(join(here, 'src', 'fonts.css'), 'utf8');
+const stylesheet = await readFile(join(here, 'src', 'styles.css'), 'utf8');
+await writeFile(join(dist, 'styles.css'), `${fontFaces}\n${stylesheet}`);
 await cp(join(here, 'src', 'app.js'), join(dist, 'app.js'));
 // Ship the resized variants, not the multi-megabyte sources they came from.
 // A source with no variant is already small enough to serve as it is.

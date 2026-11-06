@@ -109,6 +109,50 @@ for (const page of pages) {
   }
 }
 
+// 6b. an unbalanced comment in the stylesheet swallows or orphans rules, and
+//     the browser recovers silently rather than erroring
+const stylesheet = await readFile(join(dist, 'styles.css'), 'utf8');
+const opens = (stylesheet.match(/\/\*/g) || []).length;
+const closes = (stylesheet.match(/\*\//g) || []).length;
+if (opens !== closes) fail('styles.css', `unbalanced comments: ${opens} /* against ${closes} */`);
+if (stylesheet.split('{').length - 1 !== stylesheet.split('}').length - 1) {
+  fail('styles.css', 'unbalanced braces');
+}
+for (const url of [...stylesheet.matchAll(/url\(([^)]+)\)/g)].map((m) => m[1].replace(/['"]/g, ''))) {
+  if (/^(https?:|data:)/.test(url)) continue;
+  if (!present.has(url)) fail('styles.css', `missing file referenced by url() -> ${url}`);
+}
+
+// 6c. the fonts are subset to the characters the site used when fonts.py last
+//     ran; anything new would render as a blank box
+const coverageFile = join(dist, 'assets', 'fonts', 'coverage.json');
+try {
+  const covered = new Set(JSON.parse(await readFile(coverageFile, 'utf8')).codepoints);
+  const entities = { amp: '&', lt: '<', gt: '>', quot: '"', nbsp: ' ', middot: '·',
+    mdash: '—', ndash: '–', rarr: '→', larr: '←', times: '×',
+    ldquo: '“', rdquo: '”', copy: '©', hellip: '…' };
+  const missing = new Map();
+  for (const page of pages) {
+    const html = await readFile(join(dist, page), 'utf8');
+    const text = html
+      .replace(/<(script|style)[\s\S]*?<\/\1>/g, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&([a-z]+);/gi, (m, name) => entities[name] ?? m)
+      .replace(/&#(\d+);/g, (m, n) => String.fromCodePoint(Number(n)));
+    for (const ch of text) {
+      const code = ch.codePointAt(0);
+      if (code < 0x20 || covered.has(code)) continue;
+      if (!missing.has(code)) missing.set(code, `${page} "${ch}" U+${code.toString(16).toUpperCase()}`);
+    }
+  }
+  if (missing.size) {
+    fail('fonts', `characters no subset covers (re-run fonts.py): ${[...missing.values()].slice(0, 6).join(', ')}`);
+  }
+} catch (err) {
+  if (err.code === 'ENOENT') fail('fonts', 'assets/fonts/coverage.json is missing — run fonts.py');
+  else throw err;
+}
+
 // 7. the 404 must carry a base, or it breaks when served from a deep path
 const notFound = await readFile(join(dist, '404.html'), 'utf8');
 if (!/<base href="[^"]+">/.test(notFound)) fail('404.html', 'missing <base>');

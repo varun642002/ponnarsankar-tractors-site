@@ -35,14 +35,15 @@ node serve.mjs     # serves dist/ on http://localhost:4321
 ## Checks
 
 ```bash
-node check.mjs    # after a build: links, images, sitemap, page structure
+node check.mjs    # after a build: links, images, fonts, sitemap, page structure
 npm ci && npx playwright install chromium && npm test   # phone-sized browser tests
 ```
 
-`check.mjs` has no dependencies and verifies the built output — every link and image
-resolves, no template rendered `undefined`, each page has one `<h1>` and a description, the
-sitemap matches the pages, the 404 has its `<base>`, and no full-size source image slipped
-past `optimize.py`.
+`check.mjs` has no dependencies and verifies the built output — every link, image and font
+file resolves, no template rendered `undefined`, each page has one `<h1>` and a description,
+the stylesheet's comments and braces balance, the sitemap matches the pages exactly, the 404
+has its `<base>`, no full-size source image slipped past `optimize.py`, and every character
+on the site is covered by the font subsets.
 
 The Playwright suite runs at two phone sizes and covers the things only a real browser
 shows: horizontal overflow, 44px tap targets, the menu overlay, the carousel, the enquiry
@@ -56,6 +57,25 @@ check that page:
 ```bash
 SITE_ORIGIN=http://localhost:4321 node build.mjs
 ```
+
+## Regenerating images and fonts
+
+Two maintenance scripts need Python; nothing else does, and the build never runs them. Their
+output is committed, so a normal build and deploy needs neither.
+
+```bash
+python optimize.py                                   # after adding or replacing an image
+node build.mjs && python fonts.py && node build.mjs  # after changing copy or a font weight
+```
+
+`optimize.py` writes 480/720/960/1440px WebP variants beside each source; `build.mjs` finds
+them by reading the directory and offers them through `srcset`.
+
+`fonts.py` downloads the fonts from Google, subsets them to the characters the built pages
+actually use, and writes `src/fonts.css` plus a coverage manifest. One file per family where
+the family is variable, one per weight where it is not — Saira Condensed and IBM Plex Mono
+are static, so each weight is its own file. If you add copy using a character the subsets do
+not cover, `check.mjs` fails and names it; re-run `fonts.py`.
 
 ## What gets built
 

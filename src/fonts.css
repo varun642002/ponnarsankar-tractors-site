@@ -1,0 +1,9 @@
+/* Written by fonts.py — do not edit. One file per family where the
+   family is variable, one per weight where it is not. */
+@font-face{font-family:"Saira Condensed";font-style:normal;font-weight:600;font-display:swap;src:url(assets/fonts/saira-condensed-600.woff2) format("woff2")}
+@font-face{font-family:"Saira Condensed";font-style:normal;font-weight:700;font-display:swap;src:url(assets/fonts/saira-condensed-700.woff2) format("woff2")}
+@font-face{font-family:"Saira Condensed";font-style:normal;font-weight:800;font-display:swap;src:url(assets/fonts/saira-condensed-800.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Sans";font-style:normal;font-weight:400 600;font-display:swap;src:url(assets/fonts/ibm-plex-sans.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/ibm-plex-mono-400.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/ibm-plex-mono-500.woff2) format("woff2")}
+@font-face{font-family:"Noto Sans Tamil";font-style:normal;font-weight:500 600;font-display:swap;src:url(assets/fonts/noto-sans-tamil.woff2) format("woff2")}
