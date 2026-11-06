@@ -130,7 +130,7 @@ export function home(mode) {
 
 <section class="band-tight"><div class="wrap">${badgeStrip}</div></section>
 
-<section class="band" id="equipment" style="padding-top:0">
+<section class="band" id="equipment">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -143,7 +143,7 @@ export function home(mode) {
   </div>
 </section>
 
-<section class="band" id="support" style="padding-top:0">
+<section class="band" id="support">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -156,7 +156,7 @@ export function home(mode) {
   </div>
 </section>
 
-<section class="band" id="partners" style="padding-top:0">
+<section class="band" id="partners">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -169,9 +169,9 @@ export function home(mode) {
   </div>
 </section>
 
-<section class="band" style="padding-top:0"><div class="wrap">${quoteBlock}</div></section>
+<section class="band"><div class="wrap">${quoteBlock}</div></section>
 
-<section class="band" id="branches" style="padding-top:0">
+<section class="band" id="branches">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -184,7 +184,7 @@ export function home(mode) {
   </div>
 </section>
 
-<section class="band" id="contact" style="padding-top:0">
+<section class="band" id="contact">
   <div class="wrap">${enquiryPanel(0, 'Tell us what you farm, we will tell you what fits')}</div>
 </section>`;
 
@@ -237,7 +237,7 @@ export function notFound(base) {
   </div>
 </section>
 
-<section class="band" style="padding-top:0">
+<section class="band">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -287,9 +287,9 @@ export function productsIndex() {
   </div>
 </section>
 
-<section class="band" style="padding-top:0"><div class="wrap">${badgeStrip}</div></section>
+<section class="band"><div class="wrap">${badgeStrip}</div></section>
 
-<section class="band" style="padding-top:0">
+<section class="band">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -302,7 +302,7 @@ export function productsIndex() {
   </div>
 </section>
 
-<section class="band" style="padding-top:0">
+<section class="band">
   <div class="wrap">${enquiryPanel(0, 'Not sure which machine fits your land?')}</div>
 </section>`;
 
@@ -353,7 +353,7 @@ export function about() {
   </div>
 </section>
 
-<section class="band" style="padding-top:0">
+<section class="band">
   <div class="wrap">
     <div class="quote-panel glass">
       <p class="eyebrow">Our commitment</p>
@@ -363,7 +363,7 @@ export function about() {
   </div>
 </section>
 
-<section class="band" style="padding-top:0">
+<section class="band">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -384,7 +384,7 @@ export function about() {
   </div>
 </section>
 
-<section class="band" id="certificates" style="padding-top:0">
+<section class="band" id="certificates">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -405,7 +405,7 @@ export function about() {
   </div>
 </section>
 
-<section class="band" id="gallery" style="padding-top:0">
+<section class="band" id="gallery">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -422,6 +422,14 @@ export function about() {
   </div>
 </section>
 
+<section class="band">
+  <div class="wrap cta-row" style="margin-top:0">
+    <a class="btn btn-amber" href="index.html#equipment">Explore our products</a>
+    <a class="btn btn-glass" href="contact.html">Contact us</a>
+  </div>
+</section>
+
+<!-- Last, so it does not sit between two sections and break .band + .band -->
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Gallery photo" hidden>
   <div>
     <img id="lightbox-img" src="" alt="">
@@ -432,14 +440,7 @@ export function about() {
       <button class="arrow" id="lightbox-close" type="button" aria-label="Close gallery">&times;</button>
     </div>
   </div>
-</div>
-
-<section class="band" style="padding-top:0">
-  <div class="wrap" style="display:flex;flex-wrap:wrap;gap:12px">
-    <a class="btn btn-amber" href="index.html#equipment">Explore our products</a>
-    <a class="btn btn-glass" href="contact.html">Contact us</a>
-  </div>
-</section>`;
+</div>`;
 
   return shell({
     current: 'about',
@@ -466,7 +467,7 @@ export function branchesPage() {
   </div>
 </section>
 
-<section class="band" style="padding-top:0">
+<section class="band">
   <div class="wrap">${enquiryPanel(0, 'Call ahead and we will have the machine ready')}</div>
 </section>`;
 
@@ -494,7 +495,7 @@ export function contact() {
   <div class="wrap">${enquiryPanel(0, 'Tell us what you farm, we will tell you what fits')}</div>
 </section>
 
-<section class="band" style="padding-top:0">
+<section class="band">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -600,7 +601,7 @@ export function productPage(product) {
   </div>
 </section>
 
-<section class="band" style="padding-top:0">
+<section class="band">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -613,7 +614,7 @@ export function productPage(product) {
   </div>
 </section>
 
-<section class="band" style="padding-top:0">
+<section class="band">
   <div class="wrap">${enquiryPanel(1, 'Ask about ' + esc(product.name).toLowerCase())}</div>
 </section>`;
 

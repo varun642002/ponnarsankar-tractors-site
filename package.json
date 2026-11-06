@@ -1,0 +1,16 @@
+{
+  "name": "ponnarsankar-tractors-site",
+  "private": true,
+  "type": "module",
+  "description": "Static site for Ponnar Sankar Tractors. The build needs nothing installed; these dependencies are only for the browser tests.",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node build.mjs && node check.mjs",
+    "serve": "node serve.mjs",
+    "images": "python optimize.py",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1"
+  }
+}

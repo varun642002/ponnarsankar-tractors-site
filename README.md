@@ -29,8 +29,25 @@ node build.mjs     # writes dist/
 node serve.mjs     # serves dist/ on http://localhost:4321
 ```
 
-`build.mjs` needs nothing beyond Node 18 or newer. There is no `package.json`, no install
-step and no lockfile.
+`build.mjs` needs nothing beyond Node 18 or newer — no install step, no bundler. The
+`package.json` exists only for the browser tests; the build never reads it.
+
+## Checks
+
+```bash
+node check.mjs    # after a build: links, images, sitemap, page structure
+npm ci && npx playwright install chromium && npm test   # phone-sized browser tests
+```
+
+`check.mjs` has no dependencies and verifies the built output — every link and image
+resolves, no template rendered `undefined`, each page has one `<h1>` and a description, the
+sitemap matches the pages, the 404 has its `<base>`, and no full-size source image slipped
+past `optimize.py`.
+
+The Playwright suite runs at two phone sizes and covers the things only a real browser
+shows: horizontal overflow, 44px tap targets, the menu overlay, the carousel, the enquiry
+form, the lightbox, the Tamil toggle, and that phones get resized images. Both run in CI and
+the deploy waits on them.
 
 One caveat when previewing locally: `404.html` carries a `<base>` pointing at the deploy
 path, so a default build serves it unstyled from `localhost`. Build with the local origin to

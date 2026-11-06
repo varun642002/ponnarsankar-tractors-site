@@ -3,12 +3,14 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
-# Allow one deploy at a time; let an in-progress run finish rather than
-# cancelling it part way through publishing.
+# One deploy at a time, and never let it finish part way through publishing.
+# Pull request runs get their own group: sharing it would let a PR displace a
+# queued deploy of main, which would then never publish.
 concurrency:
-  group: pages
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.run_id) || 'pages-deploy' }}
   cancel-in-progress: false
 
 permissions:
@@ -17,7 +19,31 @@ permissions:
   id-token: write
 
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install test dependencies
+        run: npm ci
+
+      - name: Install the browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser tests
+        run: npm test
+
+      - name: Build and check the output
+        run: node build.mjs && node check.mjs
+
   deploy:
+    needs: verify
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
