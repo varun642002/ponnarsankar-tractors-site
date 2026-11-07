@@ -411,10 +411,10 @@ export function about() {
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <p class="eyebrow">Equipment in action</p>
-        <h2 class="ta-swap" data-ta="படத்தொகுப்பு">Our machines working on real Tamil Nadu farms</h2>
+        <p class="eyebrow">Recent handovers</p>
+        <h2 class="ta-swap" data-ta="படத்தொகுப்பு">Machines going out to farmers across the districts</h2>
       </div>
-      <p class="lede">Photographs from customer fields and demonstrations. Select any photo to see it full size.</p>
+      <p class="lede">Every photograph here is a customer collecting a machine from one of our branches. Select any photo to see it full size.</p>
     </div>
     <div class="gallery">${gallery
       .map(

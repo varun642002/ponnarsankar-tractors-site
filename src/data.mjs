@@ -209,10 +209,22 @@ export const branches = [
   },
 ];
 
-export const gallery = Array.from({ length: 12 }, (_, i) => ({
-  src: `assets/gallery-${i + 1}.jpg`,
-  alt: `Ponnar Sankar Tractors equipment working in the field, photo ${i + 1}`,
-}));
+// Written from the photographs themselves: every one is a handover, a customer
+// with the brochure beside the implement they have just taken delivery of.
+export const gallery = [
+  'A customer with the Gomadhi mulcher he has just bought, the tractor it mounts to behind him',
+  'A customer beside a new Gomadhi rotavator in the yard at the branch',
+  'A customer taking delivery of a Gomadhi rotavator under the workshop roof',
+  'A new Gomadhi rotavator hitched to the customer’s tractor outside the branch',
+  'A customer with a Gomadhi rotavator before it leaves the yard',
+  'A customer taking delivery of a Gomadhi mulcher at her farm, the tractor alongside',
+  'A customer with a new Gomadhi rotavator on the paved yard at the branch',
+  'A customer beside the Gomadhi rotavator he has just collected',
+  'A customer with a Gomadhi mulcher on the forecourt at the branch',
+  'Two customers with a Gomadhi mulcher mounted on their tractor',
+  'A customer with a Gomadhi mulcher fitted to a compact tractor',
+  'A customer and a member of the branch team with a new Gomadhi mulcher',
+].map((alt, i) => ({ src: `assets/gallery-${i + 1}.jpg`, alt }));
 
 export const products = [
   {
