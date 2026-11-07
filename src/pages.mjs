@@ -117,7 +117,9 @@ export function home(mode) {
     <button class="arrow" id="slide-prev" type="button" aria-label="Previous slide">&larr;</button>
     ${dots}
     <button class="arrow" id="slide-next" type="button" aria-label="Next slide">&rarr;</button>
+    <button class="arrow" id="slide-pause" type="button" aria-label="Pause the slideshow"><svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><rect x="2" y="1" width="3.5" height="12" fill="currentColor"/><rect x="8.5" y="1" width="3.5" height="12" fill="currentColor"/></svg></button>
   </div>
+  <p class="sr-only" id="slide-status" role="status" aria-live="polite"></p>
   <div class="wrap plate-wrap">
     <div class="plate">
       <div class="glass-dark"><dt>1988</dt><dd>Serving farmers since</dd></div>

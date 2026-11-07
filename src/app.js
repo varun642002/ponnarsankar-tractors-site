@@ -53,28 +53,57 @@
     var timer = null;
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    var show = function (next) {
+    var status = document.getElementById('slide-status');
+    var pauseBtn = document.getElementById('slide-pause');
+    // Moving content has to be stoppable; someone who reduces motion gets it
+    // stopped from the start.
+    var paused = reduced;
+
+    var show = function (next, announce) {
       index = (next + slides.length) % slides.length;
       slides.forEach(function (s, i) {
         s.classList.toggle('is-active', i === index);
         s.setAttribute('aria-hidden', String(i !== index));
       });
       dots.forEach(function (d, i) { d.setAttribute('aria-selected', String(i === index)); });
+      if (announce && status) {
+        var label = slides[index].querySelector('.eyebrow');
+        status.textContent =
+          'Slide ' + (index + 1) + ' of ' + slides.length +
+          (label ? ': ' + label.textContent.trim() : '');
+      }
     };
     var start = function () {
-      if (reduced) return;
       stop();
-      timer = setInterval(function () { show(index + 1); }, 7000);
+      if (paused) return;
+      timer = setInterval(function () { show(index + 1, true); }, 7000);
     };
     var stop = function () { if (timer) clearInterval(timer); timer = null; };
 
+    if (pauseBtn) {
+      // drawn, not typed: a glyph here would drag two more characters into the
+      // font subsets for the sake of an icon
+      var PLAY = '<svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M3 1l10 6-10 6z" fill="currentColor"/></svg>';
+      var PAUSE = '<svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><rect x="2" y="1" width="3.5" height="12" fill="currentColor"/><rect x="8.5" y="1" width="3.5" height="12" fill="currentColor"/></svg>';
+      var renderPause = function () {
+        pauseBtn.innerHTML = paused ? PLAY : PAUSE;
+        pauseBtn.setAttribute('aria-label', paused ? 'Play the slideshow' : 'Pause the slideshow');
+      };
+      renderPause();
+      pauseBtn.addEventListener('click', function () {
+        paused = !paused;
+        renderPause();
+        if (paused) stop(); else start();
+      });
+    }
+
     dots.forEach(function (d, i) {
-      d.addEventListener('click', function () { show(i); start(); });
+      d.addEventListener('click', function () { show(i, true); start(); });
     });
     var prev = document.getElementById('slide-prev');
     var next = document.getElementById('slide-next');
-    if (prev) prev.addEventListener('click', function () { show(index - 1); start(); });
-    if (next) next.addEventListener('click', function () { show(index + 1); start(); });
+    if (prev) prev.addEventListener('click', function () { show(index - 1, true); start(); });
+    if (next) next.addEventListener('click', function () { show(index + 1, true); start(); });
 
     var hero = document.querySelector('.hero');
     if (hero) {
@@ -82,7 +111,7 @@
       hero.addEventListener('mouseleave', start);
       hero.addEventListener('focusin', stop);
     }
-    show(0);
+    show(0, false);
     start();
   }
 

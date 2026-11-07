@@ -137,7 +137,9 @@ function socialRail(depth) {
   return `<nav class="social-rail glass" aria-label="Contact shortcuts">${links}</nav>`;
 }
 
-function footer(depth) {
+// `current` decides whether the keyword blocks appear: they are worth ~6KB of
+// markup and only earn it on the home page, not on all thirteen.
+function footer(depth, current) {
   const p = up(depth);
   const productLinks = products
     .map((pr) => `<li><a href="${p}products/${pr.slug}.html">${esc(pr.name)}</a></li>`)
@@ -179,14 +181,14 @@ function footer(depth) {
           </ul>
         </div>
       </div>
-      <details class="seo-block">
+      ${current === 'home' ? `<details class="seo-block">
         <summary>Product offerings</summary>
         <div class="terms">${termPills(productOfferings)}</div>
       </details>
       <details class="seo-block">
         <summary>Common search terms</summary>
         <div class="terms">${termPills(searchTerms)}</div>
-      </details>
+      </details>` : ''}
       <div class="foot-bottom">
         <span>${esc(business.name)} &middot; Established ${business.since}</span>
         <span>Mon&ndash;Sat 9:00&ndash;18:00 &middot; Closed Sunday</span>
@@ -319,7 +321,7 @@ export function shell({ depth = 0, current = '', title, description, body, jsonL
 <main>
 ${body}
 </main>
-${footer(depth)}
+${footer(depth, current)}
 ${socialRail(depth)}
 ${mobileRail(depth)}
 <script src="${p}app.js" defer></script>`;

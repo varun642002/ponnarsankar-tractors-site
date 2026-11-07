@@ -114,6 +114,27 @@ test('the carousel advances and its dot follows', async ({ page }) => {
   await expect(page.locator('.dot[aria-selected="true"]')).toHaveCount(1);
 });
 
+test('the slideshow can be stopped and announces itself', async ({ page }) => {
+  await page.goto('/index.html');
+  const pause = page.locator('#slide-pause');
+  await expect(pause).toHaveAttribute('aria-label', 'Pause the slideshow');
+
+  await pause.click();
+  await expect(pause).toHaveAttribute('aria-label', 'Play the slideshow');
+
+  // nothing may move again on its own: autoplay is 7s, so 9 is past a tick
+  const frozen = await page.evaluate(() =>
+    [...document.querySelectorAll('.slide')].findIndex((s) => s.classList.contains('is-active')));
+  await page.waitForTimeout(9000);
+  const still = await page.evaluate(() =>
+    [...document.querySelectorAll('.slide')].findIndex((s) => s.classList.contains('is-active')));
+  expect(still, 'paused slideshow must not advance').toBe(frozen);
+
+  // a screen reader needs to be told the slide changed
+  await page.locator('#slide-next').click();
+  await expect(page.locator('#slide-status')).toContainText(/Slide \d of 3/);
+});
+
 test('the enquiry form builds a message', async ({ page }) => {
   await page.goto('/contact.html');
   await page.fill('#f-name', 'Murugan');
