@@ -1,3 +1,11 @@
+/* Contents
+   tokens · layout helpers · glass primitives · header · mobile drawer
+   carousel hero · page header · section heads · badges · cards · stats
+   partners · quote · branches · product detail · gallery · forms
+   social rail · footer · mobile rail · tamil · phone overrides
+
+   Phone overrides live at the end and are the last word on a small screen. */
+
 
 /* Layout: ambient field-light backdrop -> floating glass header pill -> frosted
    content panels -> glass social rail. Every repeated element is a pill. */
@@ -242,6 +250,9 @@ img{display:block;max-width:100%}
 .slide h1,.slide h2{font-size:clamp(40px,7.6vw,82px);line-height:.95;max-width:15ch}
 .slide em{font-style:normal;color:var(--amber-bright)}
 .slide .lede{max-width:52ch}
+/* the photograph behind these runs light in places, so they carry a shadow */
+.slide h1,.slide h2,.page-head h1{text-shadow:0 2px 18px rgba(0,0,0,.55)}
+.slide .lede,.page-head .lede{text-shadow:0 1px 10px rgba(0,0,0,.5)}
 .slide-nav{
   position:absolute;z-index:3;bottom:clamp(96px,13vw,140px);
   left:max(18px,env(safe-area-inset-left,0px));
@@ -327,7 +338,6 @@ img{display:block;max-width:100%}
   transition:border-color .18s ease,transform .18s ease;
 }
 .pill-link:hover{border-color:var(--amber);transform:translateX(2px)}
-.on-dark .pill-link{color:var(--amber-bright);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
 
 /* ---------- stats / why ---------- */
 .stat-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
@@ -344,7 +354,6 @@ img{display:block;max-width:100%}
   justify-self:start;padding:6px 13px;border-radius:var(--r-pill);
   background:var(--glass-strong);border:1px solid var(--line);
 }
-.on-dark .num{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:var(--amber-bright)}
 
 /* ---------- partners ---------- */
 .partners{display:grid;gap:18px}
@@ -366,6 +375,8 @@ img{display:block;max-width:100%}
   width:19px;height:19px;border-radius:var(--r-pill);display:grid;place-items:center;
   background:linear-gradient(180deg,var(--fill),var(--fill-deep));margin-top:2px;
 }
+/* the same shape without the checkmarks, for a row of links */
+.link-row{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
 .cert-grid{display:grid;gap:18px}
 @media (min-width:720px){.cert-grid{grid-template-columns:1fr 1fr}}
 .cert{border-radius:var(--r-lg);padding:20px;display:grid;gap:14px}
@@ -453,7 +464,6 @@ img{display:block;max-width:100%}
 }
 .spec-pills dt{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin:0}
 .spec-pills dd{margin:0;font-family:var(--display);font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
-.on-dark .spec-pills div{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15)}
 .table-scroll{overflow-x:auto;border-radius:var(--r-md);border:1px solid var(--line)}
 table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px}
 th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line)}
@@ -589,9 +599,9 @@ tr:last-child td{border-bottom:0}
 :root[lang="ta"] .ta-swap{font-family:var(--tamil);letter-spacing:0;line-height:1.28}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 
-/* legibility over photographs */
-.slide h1,.slide h2,.page-head h1{text-shadow:0 2px 18px rgba(0,0,0,.55)}
-.slide .lede,.page-head .lede{text-shadow:0 1px 10px rgba(0,0,0,.5)}
+/* ---------- phone overrides ----------
+   These three blocks all apply on a small screen and have equal specificity,
+   so the later one wins. Keep them in this order. */
 
 /* very narrow phones: let the wordmark give way to the controls */
 @media (max-width:560px){
@@ -599,17 +609,14 @@ tr:last-child td{border-bottom:0}
   .mark{overflow:hidden}
   .mark-name{font-size:17px;overflow:hidden;text-overflow:ellipsis}
   .mark-sub{display:none}
-  .chip{padding:9px 11px;font-size:11px}
+  .chip{padding:9px 11px}
 }
 @media (max-width:400px){
   .rail a{font-size:9px;letter-spacing:.06em}
   .rail a b{font-size:13px}
 }
 
-/* a plain row of pill links, with none of the checkmark bullets of .checks */
-.link-row{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
-
-/* ---------- phones: thumb-sized targets and a floor under the type ---------- */
+/* thumb-sized targets and a floor under the type */
 @media (max-width:860px){
   .btn,.chip,.pill-link,.arrow,.copy{min-height:44px}
   .arrow{width:44px}
