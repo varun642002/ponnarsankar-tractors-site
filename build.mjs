@@ -7,7 +7,11 @@ import { writeFile, mkdir, cp, rm, readdir, readFile } from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { products } from './src/data.mjs';
-import { home, productsIndex, about, branchesPage, contact, productPage, notFound } from './src/pages.mjs';
+import { home } from './src/pages/home.mjs';
+import { productsIndex, productPage } from './src/pages/products.mjs';
+import { about } from './src/pages/about.mjs';
+import { branchesPage, contact } from './src/pages/branches.mjs';
+import { notFound } from './src/pages/not-found.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const dist = join(here, 'dist');

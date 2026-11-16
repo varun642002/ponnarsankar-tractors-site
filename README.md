@@ -83,12 +83,15 @@ Twelve pages, plus `sitemap.xml` and `robots.txt`:
 
 | Page | Source |
 | --- | --- |
-| Home, with the hero carousel | `src/pages.mjs` → `home()` |
-| Products index | `productsIndex()` |
-| Seven product detail pages | `productPage()`, one per entry in `products` |
-| About, with the certificates and photo gallery | `about()` |
-| Branches | `branchesPage()` |
-| Contact | `contact()` |
+| Home, with the hero carousel | `src/pages/home.mjs` |
+| Products index and the seven detail pages | `src/pages/products.mjs` |
+| About, with the certificates and photo gallery | `src/pages/about.mjs` |
+| Branches and contact | `src/pages/branches.mjs` |
+| 404 | `src/pages/not-found.mjs` |
+
+Fragments used by more than one page — the badge strip, product cards, support
+tiles, partner cards, the quote and the LocalBusiness data — live in
+`src/components.mjs`.
 
 `dist/index.artifact.html` is the home page without the surrounding `<html>` document, for
 hosts that supply their own. Ignore it if you are deploying the folder as a normal site.
@@ -97,11 +100,13 @@ hosts that supply their own. Ignore it if you are deploying the folder as a norm
 
 ```
 assets/        product photographs, certificates, gallery images
-src/data.mjs   all content: products, specifications, branches, keyword lists
-src/layout.mjs the page shell, header, footer and shared blocks
-src/pages.mjs  one function per page
-src/styles.css the whole stylesheet
-src/app.js     carousel, language toggle, gallery lightbox, enquiry form
+src/data.mjs       all content: products, specifications, branches, keyword lists
+src/layout.mjs     the page shell, header, footer, <img> helper, shared blocks
+src/components.mjs fragments used by more than one page
+src/pages/         one module per page
+src/fonts.css      written by fonts.py; prepended to the stylesheet at build
+src/styles.css     the whole stylesheet
+src/app.js         carousel, language toggle, gallery lightbox, enquiry form
 build.mjs      renders src/ into dist/
 serve.mjs      a static server for local preview only
 ```
