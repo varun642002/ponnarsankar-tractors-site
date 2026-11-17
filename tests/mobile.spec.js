@@ -234,6 +234,26 @@ test('fonts are self-hosted and each weight is its own shape', async ({ page }) 
   expect(family).toContain('Noto Sans Tamil');
 });
 
+test('the active dot fills towards the next slide, and empties when stopped', async ({ page }) => {
+  await page.goto('/index.html');
+  // scaleX of the bar inside whichever dot is selected
+  const filled = () =>
+    page.evaluate(() => {
+      const bar = document.querySelector('.dot[aria-selected="true"] .dot-fill');
+      if (!bar) return -1;
+      return new DOMMatrix(getComputedStyle(bar).transform).a;
+    });
+
+  await expect(page.locator('.slide-nav')).toHaveClass(/has-fill/);
+  await expect.poll(filled, { message: 'the bar should be growing' }).toBeGreaterThan(0.2);
+
+  // stopping the slideshow has to stop the clock it is drawing
+  await page.locator('#slide-pause').click();
+  await expect.poll(filled, { message: 'a stopped bar shows no time running' }).toBe(0);
+  await page.waitForTimeout(1500);
+  expect(await filled(), 'and it must stay empty').toBe(0);
+});
+
 test('each slide uncovers its photograph within its turn', async ({ page }) => {
   await page.goto('/index.html');
   // Stop autoplay first. The cover clears at six seconds and the slide turns at

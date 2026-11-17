@@ -81,6 +81,36 @@
     var timer = null;
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // Each dot carries a bar that fills over the seven seconds until the next
+    // slide, so the row shows how long is left rather than only where you are.
+    // It is driven here rather than in CSS because the clock it has to agree
+    // with lives here: hovering the hero clears the timer, and leaving starts
+    // a fresh one, so the bar has to start again too.
+    var fills = reduced ? [] : dots.map(function (d) {
+      var f = document.createElement('i');
+      f.className = 'dot-fill';
+      d.appendChild(f);
+      return f;
+    });
+    if (fills.length) {
+      var nav = document.querySelector('.slide-nav');
+      if (nav) nav.classList.add('has-fill');
+    }
+    var clearFills = function () {
+      fills.forEach(function (f) {
+        f.style.transition = 'none';
+        f.style.transform = 'scaleX(0)';
+      });
+    };
+    var runFill = function () {
+      clearFills();
+      var f = fills[index];
+      if (!f) return;
+      void f.offsetWidth; // commit the reset before the long transition
+      f.style.transition = 'transform 7s linear';
+      f.style.transform = 'scaleX(1)';
+    };
+
     var status = document.getElementById('slide-status');
     var pauseBtn = document.getElementById('slide-pause');
     // Moving content has to be stoppable; someone who reduces motion gets it
@@ -94,6 +124,7 @@
         s.setAttribute('aria-hidden', String(i !== index));
       });
       dots.forEach(function (d, i) { d.setAttribute('aria-selected', String(i === index)); });
+      if (!paused) runFill();
       if (announce && status) {
         var label = slides[index].querySelector('.eyebrow');
         status.textContent =
@@ -104,9 +135,14 @@
     var start = function () {
       stop();
       if (paused) return;
+      runFill();
       timer = setInterval(function () { show(index + 1, true); }, 7000);
     };
-    var stop = function () { if (timer) clearInterval(timer); timer = null; };
+    var stop = function () {
+      if (timer) clearInterval(timer);
+      timer = null;
+      clearFills();
+    };
 
     if (pauseBtn) {
       // drawn, not typed: a glyph here would drag two more characters into the
@@ -143,6 +179,20 @@
     start();
   }
 
+  /* ---------- a light under the pointer on the cards ---------- */
+  // One listener on the document rather than two per card: there are fourteen
+  // of them on the products page. Fine pointers only — on a touch screen the
+  // light would land wherever the last tap was and stay there.
+  if (!stillness && window.matchMedia('(pointer:fine)').matches) {
+    document.addEventListener('pointermove', function (e) {
+      var card = e.target && e.target.closest ? e.target.closest('.card') : null;
+      if (!card) return;
+      var r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', Math.round(((e.clientX - r.left) / r.width) * 100) + '%');
+      card.style.setProperty('--my', Math.round(((e.clientY - r.top) / r.height) * 100) + '%');
+    }, { passive: true });
+  }
+
   /* ---------- copy a phone number ---------- */
   function selectText(btn) {
     var span = btn.parentNode.querySelector('.tel-num');
@@ -162,6 +212,8 @@
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(value).then(function () {
         btn.textContent = 'Copied';
+        btn.classList.add('is-done');
+        setTimeout(function () { btn.classList.remove('is-done'); }, 500);
         restore();
       }, function () { selectText(btn); restore(); });
     } else {

@@ -63,8 +63,9 @@ body{
   font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;
   padding-bottom:92px;position:relative;
 }
+/* inset is negative so the drift below never pulls an edge into view */
 body::after{
-  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  content:"";position:fixed;inset:-12%;z-index:-1;pointer-events:none;
   background:
     radial-gradient(60vw 48vw at 82% 6%, var(--amber-glow), transparent 68%),
     radial-gradient(70vw 55vw at 6% 36%, var(--green-glow), transparent 70%),
@@ -160,6 +161,14 @@ img{display:block;max-width:100%}
   font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
   padding:13px 28px;border:1px solid transparent;border-radius:var(--r-pill);cursor:pointer;
   text-decoration:none;transition:transform .32s var(--spring),background .18s ease,color .18s ease,box-shadow .32s var(--spring);
+  position:relative;overflow:hidden;isolation:isolate;
+}
+/* A negative z-index child paints over its parent background and under the
+   parent text, which is exactly where a sheen belongs. */
+.btn::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(100deg,transparent 34%,rgba(255,255,255,.42) 50%,transparent 66%);
+  transform:translateX(-130%);
 }
 .btn:hover{transform:translateY(-3px) scale(1.035)}
 /* the press has to beat the hover, so it is shorter and goes under the rest */
@@ -330,6 +339,15 @@ img{display:block;max-width:100%}
   transition:background .2s ease,width .38s var(--spring);
 }
 .dot[aria-selected="true"]{background:var(--amber-bright);width:48px}
+/* app.js puts a fill inside each dot and marks the row. Without script the
+   dots stay plain amber, which is why the track colour lives behind that
+   class rather than on .dot itself. */
+.slide-nav.has-fill .dot{position:relative;overflow:hidden}
+.slide-nav.has-fill .dot[aria-selected="true"]{background:rgba(255,255,255,.32)}
+.dot-fill{
+  position:absolute;inset:0;border-radius:inherit;background:var(--amber-bright);
+  transform:scaleX(0);transform-origin:left center;
+}
 .arrow{
   width:40px;height:40px;border-radius:var(--r-pill);cursor:pointer;
   background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:var(--on-field);
@@ -386,6 +404,15 @@ img{display:block;max-width:100%}
   transition:transform .4s var(--spring),box-shadow .4s var(--settle),border-color .22s ease;
 }
 .card:hover{transform:translateY(-7px) scale(1.012);box-shadow:var(--shadow-lift);border-color:var(--amber)}
+/* a warm light that follows the pointer across the card; app.js writes the
+   two coordinates, and the card is lit only while the pointer is on it */
+.card::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  opacity:0;transition:opacity .3s ease;
+  background:radial-gradient(230px circle at var(--mx,50%) var(--my,50%),rgba(250,204,21,.22),transparent 72%);
+}
+.card{position:relative}
+.card:hover::after{opacity:1}
 .card:active{transform:translateY(-2px) scale(.995);transition-duration:.1s}
 .card-media{display:block;overflow:hidden;border-radius:var(--r-md);min-width:0}
 .card-img{aspect-ratio:16/10;max-width:100%;width:100%;display:block;object-fit:cover;background:var(--paper-2);transition:transform .55s var(--settle)}
@@ -413,12 +440,14 @@ img{display:block;max-width:100%}
 
 /* ---------- stats / why ---------- */
 .stat-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
-.stat{border-radius:var(--r-lg);padding:24px 20px;text-align:center}
+.stat{border-radius:var(--r-lg);padding:24px 20px;text-align:center;transition:transform .36s var(--spring),border-color .2s ease}
+.stat:hover{transform:translateY(-5px);border-color:var(--amber)}
 .stat b{display:block;font-family:var(--display);font-size:clamp(32px,4.4vw,46px);font-weight:800;color:var(--amber);line-height:1;font-variant-numeric:tabular-nums}
 .stat span{display:block;margin-top:8px;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
 
 .tiles{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.tile{border-radius:var(--r-lg);padding:26px 24px;display:grid;gap:10px;align-content:start;min-width:0}
+.tile{border-radius:var(--r-lg);padding:26px 24px;display:grid;gap:10px;align-content:start;min-width:0;transition:transform .36s var(--spring),border-color .2s ease}
+.tile:hover{transform:translateY(-5px);border-color:var(--amber)}
 .tile h3{font-size:21px}
 .tile p{font-size:15.5px;color:var(--ink-soft)}
 .num{
@@ -471,7 +500,8 @@ img{display:block;max-width:100%}
 
 /* ---------- branches ---------- */
 .branch-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
-.branch{border-radius:var(--r-lg);padding:24px;display:grid;gap:12px;align-content:start;min-width:0}
+.branch{border-radius:var(--r-lg);padding:24px;display:grid;gap:12px;align-content:start;min-width:0;transition:transform .36s var(--spring),border-color .2s ease}
+.branch:hover{transform:translateY(-5px);border-color:var(--amber)}
 .branch.head{border-color:var(--amber)}
 @media (min-width:900px){.branch.head{grid-column:span 2}}
 .branch h3{font-size:22px}
@@ -491,6 +521,7 @@ img{display:block;max-width:100%}
   transition:border-color .18s ease,color .18s ease;
 }
 .copy:hover{border-color:var(--amber);color:var(--amber)}
+.copy.is-done{animation:pop .42s var(--spring)}
 .on-dark .copy{color:var(--on-field-soft);border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.08)}
 .on-dark .copy:hover{border-color:var(--amber-bright);color:var(--amber-bright)}
 .soon{
@@ -606,6 +637,21 @@ tr:last-child td{border-bottom:0}
    opened something. Nothing repeats itself while you read. */
 @media (prefers-reduced-motion: no-preference){
   .drawer:not([hidden]){animation:drawer-in .34s var(--settle) both}
+  /* and its links follow it in, one after another */
+  .drawer:not([hidden]) > *{animation:drawer-item .3s var(--settle) both}
+  .drawer:not([hidden]) > :nth-child(2){animation-delay:26ms}
+  .drawer:not([hidden]) > :nth-child(3){animation-delay:52ms}
+  .drawer:not([hidden]) > :nth-child(4){animation-delay:78ms}
+  .drawer:not([hidden]) > :nth-child(5){animation-delay:104ms}
+  .drawer:not([hidden]) > :nth-child(6){animation-delay:130ms}
+  .drawer:not([hidden]) > :nth-child(7){animation-delay:156ms}
+  .drawer:not([hidden]) > :nth-child(8){animation-delay:182ms}
+  .drawer:not([hidden]) > :nth-child(9){animation-delay:208ms}
+  .drawer:not([hidden]) > :nth-child(10){animation-delay:234ms}
+  .drawer:not([hidden]) > :nth-child(11){animation-delay:260ms}
+  .drawer:not([hidden]) > :nth-child(12){animation-delay:286ms}
+  .drawer:not([hidden]) > :nth-child(13){animation-delay:312ms}
+  .drawer:not([hidden]) > :nth-child(14){animation-delay:338ms}
   .lightbox:not([hidden]){animation:fade-in .2s ease-out both}
   .lightbox:not([hidden]) img{animation:zoom-in .42s var(--spring) both}
 
@@ -615,6 +661,12 @@ tr:last-child td{border-bottom:0}
   .slides > .slide:first-child .slide-inner > :nth-child(2){animation-delay:.07s}
   .slides > .slide:first-child .slide-inner > :nth-child(3){animation-delay:.14s}
   .slides > .slide:first-child .slide-inner > :nth-child(4){animation-delay:.21s}
+
+  .btn:hover::after{animation:sheen .72s ease-out}
+  /* The field light behind the page drifts over three quarters of a minute.
+     It is slow enough that you never catch it moving, only notice the page is
+     not quite dead. */
+  body::after{animation:field-drift 46s ease-in-out infinite alternate}
 }
 /* paper has no entrance */
 @media print{.slide-inner > *{animation:none!important}}
@@ -622,6 +674,10 @@ tr:last-child td{border-bottom:0}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
 @keyframes zoom-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
 @keyframes hero-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes drawer-item{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@keyframes sheen{from{transform:translateX(-130%)}to{transform:translateX(130%)}}
+@keyframes pop{0%{transform:scale(1)}42%{transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes field-drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-3%,2%,0) scale(1.1)}}
 
 /* ---------- brand marks ----------
    Official colours, from the same Simple Icons release the paths came from.
