@@ -142,7 +142,7 @@ function socialRail(depth) {
     ...business.social.map((s) => entry(s.href, s.label, s.icon, true)),
     entry(business.maps, 'Find the shop', 'map', true),
   ].join('\n');
-  return `<nav class="social-rail glass" aria-label="Contact shortcuts">${links}</nav>`;
+  return `<nav class="social-rail" aria-label="Contact shortcuts">${links}</nav>`;
 }
 
 // `current` decides whether the keyword blocks appear: they are worth ~6KB of

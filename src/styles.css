@@ -40,6 +40,12 @@
   --shadow:0 2px 6px rgba(18,32,24,.05), 0 18px 40px -22px rgba(18,32,24,.4);
   --shadow-lift:0 4px 10px rgba(18,32,24,.07), 0 26px 54px -24px rgba(18,32,24,.5);
 
+  /* Easing. --spring overshoots and settles back, so anything that moves
+     under the pointer arrives with a little weight behind it. --settle is the
+     same idea with less overshoot, for things that travel further. */
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  --settle:cubic-bezier(.22,1.3,.36,1);
+
   --display:"Saira Condensed","Arial Narrow",Helvetica,sans-serif;
   --body:"IBM Plex Sans",-apple-system,Segoe UI,Roboto,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -153,10 +159,11 @@ img{display:block;max-width:100%}
   display:inline-flex;align-items:center;justify-content:center;gap:9px;
   font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
   padding:13px 28px;border:1px solid transparent;border-radius:var(--r-pill);cursor:pointer;
-  text-decoration:none;transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease;
+  text-decoration:none;transition:transform .32s var(--spring),background .18s ease,color .18s ease,box-shadow .32s var(--spring);
 }
-.btn:hover{transform:translateY(-2px)}
-.btn:active{transform:translateY(0)}
+.btn:hover{transform:translateY(-3px) scale(1.035)}
+/* the press has to beat the hover, so it is shorter and goes under the rest */
+.btn:active{transform:translateY(0) scale(.96);transition-duration:.09s}
 .btn-amber{
   background:linear-gradient(180deg,var(--fill),var(--fill-deep));
   color:var(--fill-ink);border-color:rgba(255,255,255,.3);
@@ -201,8 +208,10 @@ img{display:block;max-width:100%}
   font-family:var(--display);font-size:15px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
   text-decoration:none;color:var(--on-field);padding:9px 15px;border-radius:var(--r-pill);
   border:1px solid transparent;background:transparent;cursor:pointer;
-  transition:background .18s ease,border-color .18s ease,color .18s ease;
+  transition:background .18s ease,border-color .18s ease,color .18s ease,transform .3s var(--spring);
 }
+.nav > a:hover,.nav-top:hover{transform:translateY(-2px)}
+.nav > a:active,.nav-top:active{transform:translateY(0) scale(.96);transition-duration:.09s}
 .nav > a:hover,.nav-top:hover,.nav a[aria-current="page"]{
   background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:var(--amber-bright);
 }
@@ -224,9 +233,10 @@ img{display:block;max-width:100%}
   font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
   background:rgba(255,255,255,.08);color:var(--on-field);border:1px solid rgba(255,255,255,.22);
   padding:9px 14px;border-radius:var(--r-pill);cursor:pointer;
-  transition:border-color .18s ease,color .18s ease,background .18s ease;
+  transition:border-color .18s ease,color .18s ease,background .18s ease,transform .3s var(--spring);
 }
-.chip:hover{border-color:var(--amber-bright);color:var(--amber-bright);background:rgba(255,255,255,.14)}
+.chip:hover{border-color:var(--amber-bright);color:var(--amber-bright);background:rgba(255,255,255,.14);transform:translateY(-2px)}
+.chip:active{transform:scale(.94);transition-duration:.09s}
 .head-call{display:none}
 /* the bottom bar already carries Enquire on phones, so it appears only once
    there is room for it beside the wordmark */
@@ -279,11 +289,30 @@ img{display:block;max-width:100%}
   .slide.is-active .slide-img{animation:slide-drift 16s ease-out both}
 }
 @keyframes slide-drift{from{transform:scale(1)}to{transform:scale(1.08)}}
+/* Two scrims over the photograph. The lower one is the old full cover and it
+   lifts away over six seconds, so each slide uncovers its own picture and then
+   holds it clear for a second before the next arrives. The upper one stays:
+   it keeps the left of the frame dark enough to read a white headline against,
+   and is gone by three-quarters of the way across. */
+.slide::before,.slide::after{content:"";position:absolute;inset:0;z-index:1}
 .slide::after{
-  content:"";position:absolute;inset:0;
+  background:linear-gradient(104deg,
+    rgba(1,32,23,.94) 0%,rgba(1,32,23,.78) 28%,
+    rgba(2,78,56,.40) 52%,rgba(2,78,56,.08) 76%,rgba(2,78,56,0) 100%);
+}
+.slide::before{
+  opacity:0;
   background:linear-gradient(104deg,rgba(1,32,23,.96) 6%,rgba(2,78,56,.88) 48%,rgba(2,78,56,.56) 100%);
 }
-.slide-inner{position:relative;z-index:1;padding-block:clamp(54px,7vw,94px)}
+.slide.is-active::before{animation:scrim-lift 6s ease-in-out both}
+@keyframes scrim-lift{from{opacity:1}to{opacity:0}}
+/* On a phone the words run the full width, so the scrim has to as well. */
+@media (max-width:760px){
+  .slide::after{
+    background:linear-gradient(176deg,rgba(1,32,23,.90) 0%,rgba(1,32,23,.74) 46%,rgba(2,78,56,.58) 100%);
+  }
+}
+.slide-inner{position:relative;z-index:2;padding-block:clamp(54px,7vw,94px)}
 .slide h1,.slide h2{font-size:clamp(40px,7.6vw,82px);line-height:.95;max-width:15ch}
 .slide em{font-style:normal;color:var(--amber-bright)}
 .slide .lede{max-width:52ch}
@@ -298,7 +327,7 @@ img{display:block;max-width:100%}
 .dot{
   width:34px;height:10px;border-radius:var(--r-pill);cursor:pointer;
   background:rgba(255,255,255,.26);border:1px solid rgba(255,255,255,.3);padding:0;
-  transition:background .2s ease,width .2s ease;
+  transition:background .2s ease,width .38s var(--spring);
 }
 .dot[aria-selected="true"]{background:var(--amber-bright);width:48px}
 .arrow{
@@ -307,7 +336,9 @@ img{display:block;max-width:100%}
   font-size:17px;line-height:1;display:grid;place-items:center;
   -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
 }
-.arrow:hover{border-color:var(--amber-bright);color:var(--amber-bright)}
+.arrow{transition:border-color .18s ease,color .18s ease,transform .3s var(--spring)}
+.arrow:hover{border-color:var(--amber-bright);color:var(--amber-bright);transform:scale(1.12)}
+.arrow:active{transform:scale(.9);transition-duration:.09s}
 
 .plate-wrap{position:relative;z-index:2;padding-block:clamp(16px,2vw,24px) clamp(16px,2vw,22px)}
 /* same track sizing and gap as .badges, so the two rows line up column for column */
@@ -352,12 +383,13 @@ img{display:block;max-width:100%}
 .card{
   border-radius:var(--r-lg);padding:10px;overflow:hidden;text-decoration:none;
   display:flex;flex-direction:column;min-width:0;
-  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
+  transition:transform .4s var(--spring),box-shadow .4s var(--settle),border-color .22s ease;
 }
-.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--amber)}
+.card:hover{transform:translateY(-7px) scale(1.012);box-shadow:var(--shadow-lift);border-color:var(--amber)}
+.card:active{transform:translateY(-2px) scale(.995);transition-duration:.1s}
 .card-media{display:block;overflow:hidden;border-radius:var(--r-md);min-width:0}
-.card-img{aspect-ratio:16/10;max-width:100%;width:100%;display:block;object-fit:cover;background:var(--paper-2);transition:transform .45s ease}
-.card:hover .card-img{transform:scale(1.06)}
+.card-img{aspect-ratio:16/10;max-width:100%;width:100%;display:block;object-fit:cover;background:var(--paper-2);transition:transform .55s var(--settle)}
+.card:hover .card-img{transform:scale(1.08)}
 .card-body{padding:18px 12px 12px;display:flex;flex-direction:column;gap:11px;flex:1;min-width:0}
 .card h3{font-size:25px}
 .card .ta{display:block;font-family:var(--tamil);font-size:15px;font-weight:500;color:var(--ink-soft);margin-top:6px;line-height:1.4}
@@ -374,9 +406,10 @@ img{display:block;max-width:100%}
   font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
   color:var(--amber);text-decoration:none;padding:8px 16px;border-radius:var(--r-pill);
   border:1px solid var(--line);background:var(--glass-strong);
-  transition:border-color .18s ease,transform .18s ease;
+  transition:border-color .18s ease,transform .34s var(--spring);
 }
-.pill-link:hover{border-color:var(--amber);transform:translateX(2px)}
+.pill-link:hover{border-color:var(--amber);transform:translateX(5px)}
+.pill-link:active{transform:translateX(2px) scale(.96);transition-duration:.09s}
 
 /* ---------- stats / why ---------- */
 .stat-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
@@ -529,9 +562,10 @@ tr:last-child td{border-bottom:0}
 .gallery button{
   padding:8px;border-radius:var(--r-lg);cursor:pointer;border:1px solid var(--glass-edge);
   background:var(--glass);display:block;overflow:hidden;
-  transition:transform .2s ease,border-color .2s ease;
+  transition:transform .36s var(--spring),border-color .2s ease;
 }
-.gallery button:hover{transform:translateY(-3px);border-color:var(--amber)}
+.gallery button:hover{transform:translateY(-6px) scale(1.02);border-color:var(--amber)}
+.gallery button:active{transform:translateY(-1px) scale(.97);transition-duration:.09s}
 .gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:var(--r-md)}
 .lightbox{
   position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;
@@ -567,16 +601,27 @@ tr:last-child td{border-bottom:0}
 }
 
 /* ---------- motion ----------
-   Only what the reader asks for: a panel opening, a photograph easing in
-   under the pointer. Nothing animates itself as you read. */
+   Most of it is in the transitions above and only runs under the pointer.
+   What is here either happens once as the page opens, or because the reader
+   opened something. Nothing repeats itself while you read. */
 @media (prefers-reduced-motion: no-preference){
-  .drawer:not([hidden]){animation:drawer-in .22s ease-out both}
+  .drawer:not([hidden]){animation:drawer-in .34s var(--settle) both}
   .lightbox:not([hidden]){animation:fade-in .2s ease-out both}
-  .lightbox:not([hidden]) img{animation:zoom-in .26s cubic-bezier(.22,.7,.3,1) both}
+  .lightbox:not([hidden]) img{animation:zoom-in .42s var(--spring) both}
+
+  /* The opening line arrives once, as the page loads. The carousel turning
+     later does not run it again — that was the part that wore thin. */
+  .slides > .slide:first-child .slide-inner > *{animation:hero-in .66s var(--settle) both}
+  .slides > .slide:first-child .slide-inner > :nth-child(2){animation-delay:.07s}
+  .slides > .slide:first-child .slide-inner > :nth-child(3){animation-delay:.14s}
+  .slides > .slide:first-child .slide-inner > :nth-child(4){animation-delay:.21s}
 }
-@keyframes drawer-in{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+/* paper has no entrance */
+@media print{.slide-inner > *{animation:none!important}}
+@keyframes drawer-in{from{opacity:0;transform:translateX(26px) scale(.98)}to{opacity:1;transform:none}}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
-@keyframes zoom-in{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+@keyframes zoom-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+@keyframes hero-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 
 /* ---------- brand marks ----------
    Official colours, from the same Simple Icons release the paths came from.
@@ -590,9 +635,10 @@ tr:last-child td{border-bottom:0}
 .social-rail a:hover .icon{color:inherit}
 
 /* ---------- social rail ---------- */
+/* No panel behind the list: each pill is its own object against the page. */
 .social-rail{
   position:fixed;z-index:34;right:14px;top:50%;transform:translateY(-50%);
-  display:none;grid-auto-flow:row;gap:6px;padding:6px;border-radius:var(--r-pill);
+  display:none;grid-auto-flow:row;gap:7px;
 }
 @media (min-width:1300px){.social-rail{display:grid}}
 .social-rail a{
@@ -600,7 +646,7 @@ tr:last-child td{border-bottom:0}
   display:flex;align-items:center;justify-content:center;overflow:hidden;
   text-decoration:none;font-family:var(--body);font-size:14px;font-weight:500;
   color:var(--ink);background:var(--glass-strong);border:1px solid var(--line);
-  transition:background .18s ease,color .18s ease,gap .2s ease,padding .2s ease;
+  transition:background .18s ease,color .18s ease,gap .2s ease,padding .2s ease,transform .34s var(--spring);
 }
 /* the names stay folded away until the rail is hovered or tabbed into, so it
    reads like the footer list without standing on the page the rest of the time */
@@ -610,7 +656,10 @@ tr:last-child td{border-bottom:0}
 }
 .social-rail:hover a,.social-rail:focus-within a{justify-content:flex-start;gap:10px;padding:0 16px 0 11px}
 .social-rail:hover a span,.social-rail:focus-within a span{max-width:140px;opacity:1}
-.social-rail a:hover{background:linear-gradient(180deg,var(--fill),var(--fill-deep));color:var(--fill-ink)}
+.social-rail a:hover{background:linear-gradient(180deg,var(--fill),var(--fill-deep));color:var(--fill-ink);transform:translateX(-4px)}
+.social-rail a:active{transform:translateX(-2px) scale(.94);transition-duration:.09s}
+.social-rail a .icon{transition:transform .34s var(--spring)}
+.social-rail a:hover .icon{transform:scale(1.18)}
 
 /* ---------- footer ---------- */
 .foot{color:var(--on-field-soft);padding-block:36px;margin-top:10px}

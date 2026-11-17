@@ -234,6 +234,37 @@ test('fonts are self-hosted and each weight is its own shape', async ({ page }) 
   expect(family).toContain('Noto Sans Tamil');
 });
 
+test('each slide uncovers its photograph within its turn', async ({ page }) => {
+  await page.goto('/index.html');
+  // Stop autoplay first. The cover clears at six seconds and the slide turns at
+  // seven, so against a moving carousel this test would be sampling a one
+  // second window and would fail on timing rather than on behaviour.
+  await page.locator('#slide-pause').click();
+
+  const scrim = () =>
+    page.evaluate(() =>
+      Number(getComputedStyle(document.querySelector('.slide.is-active'), '::before').opacity));
+
+  // a fresh slide starts under the full cover. Read the animation rather than
+  // the opacity: by the time an assertion lands the lift is already under way.
+  await page.locator('#slide-next').click();
+  const lift = await page.evaluate(() => {
+    const cs = getComputedStyle(document.querySelector('.slide.is-active'), '::before');
+    return { name: cs.animationName, seconds: cs.animationDuration, fill: cs.animationFillMode };
+  });
+  expect(lift.name, 'an arriving slide must run the lift').toBe('scrim-lift');
+  expect(lift.seconds, 'six seconds per photograph').toBe('6s');
+  expect(lift.fill, 'the photograph must stay uncovered at the end').toBe('both');
+
+  // and the photograph is clear before the 7s turn is up
+  await expect.poll(scrim, { timeout: 9000, message: 'cover should lift' }).toBe(0);
+
+  // the headline still has something dark to sit on afterwards
+  const left = await page.evaluate(
+    () => getComputedStyle(document.querySelector('.slide.is-active'), '::after').backgroundImage);
+  expect(left, 'a permanent scrim must remain under the text').toContain('gradient');
+});
+
 test('phones are served small images, not the full-size sources', async ({ page }) => {
   await page.goto('/index.html');
   // networkidle never settles here: the carousel keeps loading slides
