@@ -69,9 +69,24 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 @media (min-width:860px){body{padding-bottom:0}}
 
 .wrap{
-  width:100%;max-width:1180px;margin-inline:auto;
+  width:100%;max-width:1560px;margin-inline:auto;
   padding-left:max(18px,env(safe-area-inset-left,0px));
   padding-right:max(18px,env(safe-area-inset-right,0px));
+}
+/* wider screens get a wider column, not a wider empty margin */
+@media (min-width:1000px){
+  .wrap{
+    padding-left:max(40px,env(safe-area-inset-left,0px));
+    padding-right:max(40px,env(safe-area-inset-right,0px));
+  }
+}
+/* from here the social rail is pinned to the right edge, so the column keeps
+   clear of it — and stays centred by taking the same space on the left */
+@media (min-width:1300px){
+  .wrap{
+    padding-left:max(84px,env(safe-area-inset-left,0px));
+    padding-right:max(84px,env(safe-area-inset-right,0px));
+  }
 }
 .band{padding-block:clamp(52px,7vw,100px)}
 /* the stat row already supplies the space above, so keep this top padding small */
@@ -389,6 +404,13 @@ img{display:block;max-width:100%}
 .quote-panel blockquote{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(23px,3.2vw,34px);line-height:1.22;max-width:26ch}
 .quote-panel footer{margin-top:20px;font-family:var(--mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
 .quote-panel footer b{display:block;font-family:var(--display);font-size:17px;letter-spacing:.02em;color:var(--ink);text-transform:none;margin-bottom:3px}
+/* the commitment panel is wide and was mostly empty on the right */
+.quote-panel--wide{display:grid;gap:28px;align-items:center}
+@media (min-width:900px){.quote-panel--wide{grid-template-columns:1.25fr 1fr;gap:44px}}
+.quote-shots{margin:0;min-width:0}
+/* the machine is cut out of its studio sweep, so it sits straight on the
+   panel with no tile or frame around it */
+.quote-shots img{width:100%;aspect-ratio:4/3;object-fit:contain}
 
 /* ---------- branches ---------- */
 .branch-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
@@ -527,12 +549,21 @@ tr:last-child td{border-bottom:0}
 }
 @media (min-width:1300px){.social-rail{display:grid}}
 .social-rail a{
-  width:42px;height:42px;border-radius:var(--r-pill);display:grid;place-items:center;
-  text-decoration:none;font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.04em;
+  min-width:42px;height:42px;border-radius:var(--r-pill);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  text-decoration:none;font-family:var(--body);font-size:14px;font-weight:500;
   color:var(--ink);background:var(--glass-strong);border:1px solid var(--line);
-  transition:background .18s ease,color .18s ease,transform .18s ease;
+  transition:background .18s ease,color .18s ease,gap .2s ease,padding .2s ease;
 }
-.social-rail a:hover{background:linear-gradient(180deg,var(--fill),var(--fill-deep));color:var(--fill-ink);transform:scale(1.07)}
+/* the names stay folded away until the rail is hovered or tabbed into, so it
+   reads like the footer list without standing on the page the rest of the time */
+.social-rail a span{
+  max-width:0;opacity:0;white-space:nowrap;
+  transition:max-width .22s ease,opacity .18s ease;
+}
+.social-rail:hover a,.social-rail:focus-within a{justify-content:flex-start;gap:10px;padding:0 16px 0 11px}
+.social-rail:hover a span,.social-rail:focus-within a span{max-width:140px;opacity:1}
+.social-rail a:hover{background:linear-gradient(180deg,var(--fill),var(--fill-deep));color:var(--fill-ink)}
 
 /* ---------- footer ---------- */
 .foot{color:var(--on-field-soft);padding-block:36px;margin-top:10px}
@@ -546,6 +577,8 @@ tr:last-child td{border-bottom:0}
   border:1px solid transparent;transition:background .18s ease,border-color .18s ease,color .18s ease;
 }
 .foot a:hover{color:var(--amber-bright);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16)}
+/* the brand marks sit level with their label */
+.foot a .icon{width:16px;height:16px;vertical-align:-3px;margin-right:8px;opacity:.85}
 .foot .mark{color:var(--on-field)}
 .foot .tel-row{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16)}
 .seo-block{margin-top:22px;padding-top:20px;border-top:1px solid rgba(255,255,255,.14)}

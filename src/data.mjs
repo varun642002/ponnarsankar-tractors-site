@@ -21,9 +21,9 @@ export const business = {
   hours: 'Monday to Saturday, 9:00 AM to 6:00 PM · Closed on Sundays',
   maps: 'https://maps.app.goo.gl/Zw1SLXmyCeMyBPad9',
   social: [
-    { label: 'Facebook', short: 'FB', href: 'https://www.facebook.com/profile.php?id=61557239694555' },
-    { label: 'Instagram', short: 'IG', href: 'https://www.instagram.com/ponnar_sankar_tractor_spares/' },
-    { label: 'YouTube', short: 'YT', href: 'https://youtube.com/@ponnarsankartractors1509' },
+    { label: 'Facebook', icon: 'facebook', href: 'https://www.facebook.com/profile.php?id=61557239694555' },
+    { label: 'Instagram', icon: 'instagram', href: 'https://www.instagram.com/ponnar_sankar_tractor_spares/' },
+    { label: 'YouTube', icon: 'youtube', href: 'https://youtube.com/@ponnarsankartractors1509' },
   ],
 };
 

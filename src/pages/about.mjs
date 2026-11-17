@@ -28,10 +28,15 @@ export function about() {
 
 <section class="band">
   <div class="wrap">
-    <div class="quote-panel glass">
-      <p class="eyebrow">Our commitment</p>
-      <blockquote>Every farmer deserves machinery they can rely on, and service that does not disappear after the sale.</blockquote>
-      <footer><b>${esc(business.name)}</b>Paramathi Velur, Namakkal</footer>
+    <div class="quote-panel quote-panel--wide glass">
+      <div>
+        <p class="eyebrow">Our commitment</p>
+        <blockquote>Every farmer deserves machinery they can rely on, and service that does not disappear after the sale.</blockquote>
+        <footer><b>${esc(business.name)}</b>Paramathi Velur, Namakkal</footer>
+      </div>
+      <figure class="quote-shots">
+        ${img('assets/cultivator-cutout.png', { alt: 'A heavy duty chisel plough', sizes: SIZES.quote })}
+      </figure>
     </div>
   </div>
 </section>

@@ -2,6 +2,7 @@ import { readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { business, nav, products, branches, productOfferings, searchTerms } from './data.mjs';
+import { icon } from './icons.mjs';
 
 const assetFiles = new Set(
   readdirSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'assets')),
@@ -47,6 +48,7 @@ export const SIZES = {
   // which loads the largest variant, so the grid does not need full density.
   gallery: '(min-width:700px) 33vw, 60vw',
   certificate: '(min-width:720px) 46vw, calc(100vw - 76px)',
+  quote: '(min-width:900px) 30vw, 60vw',
   logo: '160px',
 };
 
@@ -126,13 +128,19 @@ function header(depth, current) {
 
 function socialRail(depth) {
   const p = up(depth);
+  // the mark carries the meaning, so each link names itself for a screen reader
+  // Each entry carries its name. The rail shows the marks alone until it is
+  // hovered or focused, then widens to read like the footer list — so it never
+  // sits over the page at rest.
+  const entry = (href, name, mark, external) =>
+    `<a href="${href}"${external ? ' target="_blank" rel="noopener"' : ''} title="${name}">` +
+    `${icon(mark)}<span>${name}</span></a>`;
+
   const links = [
-    `<a href="${business.whatsapp}" target="_blank" rel="noopener" title="WhatsApp">WA</a>`,
-    `<a href="${p}contact.html" title="Call us">Call</a>`,
-    ...business.social.map(
-      (s) => `<a href="${s.href}" target="_blank" rel="noopener" title="${s.label}">${s.short}</a>`,
-    ),
-    `<a href="${business.maps}" target="_blank" rel="noopener" title="Find the shop">Map</a>`,
+    entry(business.whatsapp, 'WhatsApp', 'whatsapp', true),
+    entry(`${p}contact.html`, 'Call us', 'phone', false),
+    ...business.social.map((s) => entry(s.href, s.label, s.icon, true)),
+    entry(business.maps, 'Find the shop', 'map', true),
   ].join('\n');
   return `<nav class="social-rail glass" aria-label="Contact shortcuts">${links}</nav>`;
 }
@@ -149,7 +157,7 @@ function footer(depth, current) {
     .map((i) => `<li><a href="${i.href.startsWith('http') ? i.href : p + i.href}">${i.label}</a></li>`)
     .join('\n');
   const socialLinks = business.social
-    .map((s) => `<li><a href="${s.href}" target="_blank" rel="noopener">${s.label}</a></li>`)
+    .map((s) => `<li><a href="${s.href}" target="_blank" rel="noopener">${icon(s.icon)}${s.label}</a></li>`)
     .join('\n');
   const termPills = (list) =>
     list
@@ -176,8 +184,8 @@ function footer(depth, current) {
         <div>
           <h4>Connect with us</h4>
           <ul>${socialLinks}
-            <li><a href="${business.whatsapp}" target="_blank" rel="noopener">WhatsApp</a></li>
-            <li><a href="${business.maps}" target="_blank" rel="noopener">Find the shop</a></li>
+            <li><a href="${business.whatsapp}" target="_blank" rel="noopener">${icon('whatsapp')}WhatsApp</a></li>
+            <li><a href="${business.maps}" target="_blank" rel="noopener">${icon('map')}Find the shop</a></li>
           </ul>
         </div>
       </div>
