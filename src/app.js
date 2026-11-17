@@ -2,66 +2,6 @@
   var root = document.documentElement;
   var stillness = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- things arrive as you reach them ----------
-     The .motion class is what switches the CSS on, and it is only added when
-     this code is running, so a reader with no script never meets a hidden
-     element. A timer sweeps everything in regardless after two seconds, in
-     case an observer never fires. */
-  if (!stillness && 'IntersectionObserver' in window) {
-    var groups = [
-      '.sec-head', '.badge', '.card', '.tile', '.stat', '.partner', '.cert',
-      '.branch', '.model', '.quote-panel', '.panel-dark', '.gallery button',
-    ];
-    var revealed = [];
-    groups.forEach(function (selector) {
-      var items = [].slice.call(document.querySelectorAll(selector));
-      items.forEach(function (el, i) {
-        if (el.closest('.slide') || el.classList.contains('reveal')) return;
-        el.classList.add('reveal');
-        // a short stagger within each row, capped so a long list never crawls
-        el.style.transitionDelay = Math.min(i % 6, 5) * 60 + 'ms';
-        revealed.push(el);
-      });
-    });
-
-    if (revealed.length) {
-      root.classList.add('motion');
-      var showAll = function () {
-        revealed.forEach(function (el) { el.classList.add('is-in'); });
-      };
-      var seer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (!e.isIntersecting) return;
-          seer.unobserve(e.target);
-          e.target.classList.add('is-in');
-        });
-      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
-
-      revealed.forEach(function (el) {
-        // anything already on the first screen is simply there; only what
-        // arrives later is worth animating
-        if (el.getBoundingClientRect().top < window.innerHeight) {
-          el.style.transitionDelay = '0ms';
-          el.classList.add('is-in');
-          return;
-        }
-        seer.observe(el);
-      });
-      setTimeout(showAll, 2000);
-      window.addEventListener('beforeprint', showAll);
-    }
-  }
-
-  /* ---------- the header tightens once the page moves ---------- */
-  var head = document.querySelector('.site-head');
-  if (head) {
-    var onScroll = function () {
-      head.classList.toggle('is-scrolled', window.scrollY > 60);
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-  }
-
   /* ---------- figures count up the first time they are seen ---------- */
   var counters = [].slice.call(document.querySelectorAll('[data-count]'));
   if (counters.length && !stillness && 'IntersectionObserver' in window) {

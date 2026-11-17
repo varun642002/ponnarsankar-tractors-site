@@ -114,40 +114,6 @@ test('the carousel advances and its dot follows', async ({ page }) => {
   await expect(page.locator('.dot[aria-selected="true"]')).toHaveCount(1);
 });
 
-// The reveal-on-scroll animation hides things until they are reached. If an
-// observer ever misses one, that content is simply gone — so check both that
-// the first screen is never blank and that nothing is left behind.
-for (const path of ['/index.html', '/about.html', '/products.html', '/products/rotavator.html']) {
-  test(`${path} never strands content behind the reveal`, async ({ page }) => {
-    await page.goto(path);
-    await page.waitForTimeout(400);
-
-    const hiddenOnArrival = await page.evaluate(() => {
-      const h = window.innerHeight;
-      return [...document.querySelectorAll('.reveal')].filter((el) => {
-        const r = el.getBoundingClientRect();
-        return r.top < h && r.bottom > 0 && parseFloat(getComputedStyle(el).opacity) < 0.95;
-      }).length;
-    });
-    expect(hiddenOnArrival, 'nothing on the first screen may start hidden').toBe(0);
-
-    await page.evaluate(async () => {
-      document.documentElement.style.scrollBehavior = 'auto';
-      for (let y = 0; y <= document.body.scrollHeight; y += 300) {
-        window.scrollTo(0, y);
-        await new Promise((r) => setTimeout(r, 40));
-      }
-    });
-    await page.waitForTimeout(900);
-
-    const stranded = await page.evaluate(() =>
-      [...document.querySelectorAll('.reveal')]
-        .filter((el) => parseFloat(getComputedStyle(el).opacity) < 0.95)
-        .map((el) => el.className));
-    expect(stranded, 'everything must be visible once scrolled past').toEqual([]);
-  });
-}
-
 test('the slideshow can be stopped and announces itself', async ({ page }) => {
   await page.goto('/index.html');
   const pause = page.locator('#slide-pause');

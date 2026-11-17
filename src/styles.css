@@ -567,36 +567,13 @@ tr:last-child td{border-bottom:0}
 }
 
 /* ---------- motion ----------
-   Everything here is opt-in: app.js puts .motion on the root only when the
-   browser supports IntersectionObserver and the reader has not asked for less
-   movement. Without that class nothing below applies, so the page is complete
-   and readable with no script at all — it can never leave content invisible. */
-:root.motion .reveal{opacity:0;transform:translateY(16px)}
-:root.motion .reveal.is-in{
-  opacity:1;transform:none;
-  transition:opacity .55s ease,transform .55s cubic-bezier(.22,.7,.3,1);
-}
-
-/* the header draws itself in once the page starts moving */
-.site-head .head-row{transition:min-height .25s ease,padding .25s ease,background .25s ease}
-:root.motion .site-head.is-scrolled .head-row{min-height:54px;padding-top:7px;padding-bottom:7px}
-:root.motion .site-head.is-scrolled .mark-sub{opacity:0;transition:opacity .2s ease}
-
-/* a slide's words arrive just after the picture does */
+   Only what the reader asks for: a panel opening, a photograph easing in
+   under the pointer. Nothing animates itself as you read. */
 @media (prefers-reduced-motion: no-preference){
-  .slide.is-active .eyebrow,
-  .slide.is-active h1,.slide.is-active h2,
-  .slide.is-active .lede,
-  .slide.is-active .cta-row{animation:slide-rise .55s cubic-bezier(.22,.7,.3,1) both}
-  .slide.is-active h1,.slide.is-active h2{animation-delay:.06s}
-  .slide.is-active .lede{animation-delay:.12s}
-  .slide.is-active .cta-row{animation-delay:.18s}
-
   .drawer:not([hidden]){animation:drawer-in .22s ease-out both}
   .lightbox:not([hidden]){animation:fade-in .2s ease-out both}
   .lightbox:not([hidden]) img{animation:zoom-in .26s cubic-bezier(.22,.7,.3,1) both}
 }
-@keyframes slide-rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @keyframes drawer-in{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
 @keyframes zoom-in{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
