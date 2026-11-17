@@ -636,9 +636,12 @@ tr:last-child td{border-bottom:0}
 
 /* ---------- social rail ---------- */
 /* No panel behind the list: each pill is its own object against the page. */
+/* justify-items:end keeps every pill the width of its own contents. Without
+   it the grid column takes the width of the widest one, so opening a single
+   name would stretch all six. */
 .social-rail{
   position:fixed;z-index:34;right:14px;top:50%;transform:translateY(-50%);
-  display:none;grid-auto-flow:row;gap:7px;
+  display:none;grid-auto-flow:row;justify-items:end;gap:7px;
 }
 @media (min-width:1300px){.social-rail{display:grid}}
 .social-rail a{
@@ -646,18 +649,19 @@ tr:last-child td{border-bottom:0}
   display:flex;align-items:center;justify-content:center;overflow:hidden;
   text-decoration:none;font-family:var(--body);font-size:14px;font-weight:500;
   color:var(--ink);background:var(--glass-strong);border:1px solid var(--line);
-  transition:background .18s ease,color .18s ease,gap .2s ease,padding .2s ease,transform .34s var(--spring);
+  transition:background .18s ease,color .18s ease,gap .3s var(--spring),padding .3s var(--spring),transform .34s var(--spring);
 }
-/* the names stay folded away until the rail is hovered or tabbed into, so it
-   reads like the footer list without standing on the page the rest of the time */
+/* A name unfolds only on the pill under the cursor — or the one holding
+   keyboard focus. The other five stay as marks, so the rail never turns into
+   a wall of text over the page. */
 .social-rail a span{
   max-width:0;opacity:0;white-space:nowrap;
-  transition:max-width .22s ease,opacity .18s ease;
+  transition:max-width .34s var(--spring),opacity .18s ease;
 }
-.social-rail:hover a,.social-rail:focus-within a{justify-content:flex-start;gap:10px;padding:0 16px 0 11px}
-.social-rail:hover a span,.social-rail:focus-within a span{max-width:140px;opacity:1}
-.social-rail a:hover{background:linear-gradient(180deg,var(--fill),var(--fill-deep));color:var(--fill-ink);transform:translateX(-4px)}
-.social-rail a:active{transform:translateX(-2px) scale(.94);transition-duration:.09s}
+.social-rail a:hover,.social-rail a:focus-visible{justify-content:flex-start;gap:10px;padding:0 16px 0 11px}
+.social-rail a:hover span,.social-rail a:focus-visible span{max-width:140px;opacity:1}
+.social-rail a:hover{background:linear-gradient(180deg,var(--fill),var(--fill-deep));color:var(--fill-ink)}
+.social-rail a:active{transform:scale(.94);transition-duration:.09s}
 .social-rail a .icon{transition:transform .34s var(--spring)}
 .social-rail a:hover .icon{transform:scale(1.18)}
 
