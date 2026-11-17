@@ -33,7 +33,7 @@ export const productCards = (depth = 0) =>
   `<div class="grid">${products
     .map(
       (p) => `<a class="card glass" href="${depth ? '' : ''}products/${p.slug}.html">
-  ${img(p.image, { cls: 'card-img', alt: esc(p.name), sizes: SIZES.card })}
+  <span class="card-media">${img(p.image, { cls: 'card-img', alt: esc(p.name), sizes: SIZES.card })}</span>
   <div class="card-body">
     <h3>${esc(p.name)}<span class="ta">${p.ta}</span></h3>
     <p class="tagline">${esc(p.summary)}</p>

@@ -21,7 +21,13 @@ export function about() {
       </div>
     </div>
     <div class="stat-grid">${stats
-      .map((s) => `<div class="stat glass"><b>${esc(s.value)}</b><span>${esc(s.label)}</span></div>`)
+      // the finished figure is in the markup, so the page reads correctly with
+      // no script; app.js counts up to it when it first comes into view
+      .map((s) => {
+        const [, digits, suffix] = /^(\d+)(.*)$/.exec(s.value) || [, '', s.value];
+        const count = digits ? ` data-count="${digits}" data-suffix="${esc(suffix)}"` : '';
+        return `<div class="stat glass"><b${count}>${esc(s.value)}</b><span>${esc(s.label)}</span></div>`;
+      })
       .join('\n')}</div>
   </div>
 </section>

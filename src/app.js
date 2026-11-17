@@ -1,5 +1,33 @@
 (function () {
   var root = document.documentElement;
+  var stillness = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- figures count up the first time they are seen ---------- */
+  var counters = [].slice.call(document.querySelectorAll('[data-count]'));
+  if (counters.length && !stillness && 'IntersectionObserver' in window) {
+    var run = function (el) {
+      var target = Number(el.getAttribute('data-count'));
+      var suffix = el.getAttribute('data-suffix') || '';
+      var started = null;
+      var step = function (now) {
+        if (started === null) started = now;
+        var t = Math.min((now - started) / 900, 1);
+        // ease out, so it slows into the real number rather than stopping dead
+        var eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(target * eased) + suffix;
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+    var watcher = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        watcher.unobserve(e.target);
+        run(e.target);
+      });
+    }, { threshold: 0.4 });
+    counters.forEach(function (el) { watcher.observe(el); });
+  }
 
   /* ---------- Tamil / English ---------- */
   var langBtn = document.getElementById('lang-toggle');

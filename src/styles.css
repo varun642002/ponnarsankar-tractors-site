@@ -91,6 +91,22 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .band{padding-block:clamp(52px,7vw,100px)}
 /* the stat row already supplies the space above, so keep this top padding small */
 .band-tight{padding-block:clamp(14px,1.6vw,20px) clamp(34px,4.5vw,58px)}
+
+/* A dark slab part way down, so the page is not one long pale stretch. It
+   redefines the tokens rather than restyling each child, so anything dropped
+   inside it — tiles, pills, eyebrows — turns over on its own. */
+.band-dark{
+  background:var(--field-deep);border-radius:var(--r-lg);color:var(--ink);
+  --ink:var(--on-field);
+  --ink-soft:var(--on-field-soft);
+  --line:rgba(255,255,255,.16);
+  --glass:rgba(255,255,255,.07);
+  --glass-strong:rgba(255,255,255,.11);
+  --glass-edge:rgba(255,255,255,.15);
+  --amber:var(--fill);
+}
+/* the slab keeps its own breathing room, and hands it back to what follows */
+.band + .band.band-dark,.band-dark + .band{padding-top:clamp(52px,7vw,100px)}
 section[id]{scroll-margin-top:100px}
 /* consecutive bands share one gap: the first keeps its top padding, the rest drop it */
 .band + .band,.band-tight + .band{padding-top:0}
@@ -257,6 +273,12 @@ img{display:block;max-width:100%}
 .slide.is-active{opacity:1;pointer-events:auto}
 .slide:only-child{opacity:1}
 .slide-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* the still frame drifts while it is on screen; nothing moves for anyone who
+   has asked for less motion */
+@media (prefers-reduced-motion: no-preference){
+  .slide.is-active .slide-img{animation:slide-drift 16s ease-out both}
+}
+@keyframes slide-drift{from{transform:scale(1)}to{transform:scale(1.08)}}
 .slide::after{
   content:"";position:absolute;inset:0;
   background:linear-gradient(104deg,rgba(1,32,23,.96) 6%,rgba(2,78,56,.88) 48%,rgba(2,78,56,.56) 100%);
@@ -333,7 +355,9 @@ img{display:block;max-width:100%}
   transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
 }
 .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--amber)}
-.card-img{aspect-ratio:16/10;max-width:100%;width:100%;object-fit:cover;border-radius:var(--r-md);background:var(--paper-2)}
+.card-media{display:block;overflow:hidden;border-radius:var(--r-md);min-width:0}
+.card-img{aspect-ratio:16/10;max-width:100%;width:100%;display:block;object-fit:cover;background:var(--paper-2);transition:transform .45s ease}
+.card:hover .card-img{transform:scale(1.06)}
 .card-body{padding:18px 12px 12px;display:flex;flex-direction:column;gap:11px;flex:1;min-width:0}
 .card h3{font-size:25px}
 .card .ta{display:block;font-family:var(--tamil);font-size:15px;font-weight:500;color:var(--ink-soft);margin-top:6px;line-height:1.4}
@@ -541,6 +565,17 @@ tr:last-child td{border-bottom:0}
   border:1px solid rgba(242,188,78,.5);background:rgba(250,204,21,.12);
   padding:16px 20px;border-radius:var(--r-md);white-space:pre-wrap;
 }
+
+/* ---------- brand marks ----------
+   Official colours, from the same Simple Icons release the paths came from.
+   The phone and map pin have no brand, so they follow the surrounding text. */
+.icon--whatsapp{color:#25D366}
+.icon--facebook{color:#0866FF}
+.icon--instagram{color:#E4405F}
+.icon--youtube{color:#FF0000}
+/* on the yellow hover a brand colour has too little contrast, so the mark
+   drops back to the ink the rest of the pill is using */
+.social-rail a:hover .icon{color:inherit}
 
 /* ---------- social rail ---------- */
 .social-rail{

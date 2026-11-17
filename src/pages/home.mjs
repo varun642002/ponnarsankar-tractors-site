@@ -61,7 +61,7 @@ export function home(mode) {
   </div>
 </section>
 
-<section class="band" id="support">
+<section class="band band-dark" id="support">
   <div class="wrap">
     <div class="sec-head">
       <div>
